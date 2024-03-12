@@ -56,25 +56,29 @@
             // 
             // btnNext
             // 
+            btnNext.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnNext.BackColor = Color.LightGray;
             btnNext.ForeColor = Color.Black;
-            btnNext.Location = new Point(644, 580);
+            btnNext.Location = new Point(679, 586);
             btnNext.Name = "btnNext";
-            btnNext.Size = new Size(148, 39);
+            btnNext.Size = new Size(149, 33);
             btnNext.TabIndex = 2;
             btnNext.Text = "Next";
             btnNext.UseVisualStyleBackColor = false;
+            btnNext.Click += btnNext_Click;
             // 
             // btnGenerate
             // 
+            btnGenerate.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
             btnGenerate.BackColor = Color.LightGray;
             btnGenerate.ForeColor = Color.Black;
-            btnGenerate.Location = new Point(810, 580);
+            btnGenerate.Location = new Point(834, 586);
             btnGenerate.Name = "btnGenerate";
-            btnGenerate.Size = new Size(173, 39);
+            btnGenerate.Size = new Size(149, 33);
             btnGenerate.TabIndex = 3;
             btnGenerate.Text = "Generate";
             btnGenerate.UseVisualStyleBackColor = false;
+            btnGenerate.Click += btnGenerate_Click;
             // 
             // lblArray
             // 
@@ -99,7 +103,7 @@
             Controls.Add(lblArray);
             Font = new Font("Consolas", 14F, FontStyle.Bold);
             ForeColor = Color.FromArgb(255, 128, 0);
-            Margin = new Padding(5, 5, 5, 5);
+            Margin = new Padding(5);
             Name = "DungeonMain";
             Text = "Rogue";
             Load += Form1_Load;
