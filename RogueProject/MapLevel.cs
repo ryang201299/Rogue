@@ -10,7 +10,8 @@ using System.Threading.Tasks;
 namespace RogueProject
 {
     internal class MapLevel {
-        private enum Direction {
+        private enum Direction
+        {
             None = 0,
             North = 1,
             East = 2,
@@ -19,8 +20,22 @@ namespace RogueProject
         }
 
         // Dictionary to hold hallway endings during map generation
-        private Dictionary<MapSpace, Direction> deadEnds = 
+        // Previously was MapSpace and Direction, but I care more about region than direction
+        private Dictionary<MapSpace, Direction> deadEnds =
             new Dictionary<MapSpace, Direction>();
+
+        private Dictionary<int, List<MapSpace>> allDoorways = new Dictionary<int, List<MapSpace>>()
+        {
+            { 1, new List<MapSpace>() },
+            { 2, new List<MapSpace>() },
+            { 3, new List<MapSpace>() },
+            { 4, new List<MapSpace>() },
+            { 5, new List<MapSpace>() },
+            { 6, new List<MapSpace>() },
+            { 7, new List<MapSpace>() },
+            { 8, new List<MapSpace>() },
+            { 9, new List<MapSpace>() }
+        };
 
         // Box drawing constants and other symbols.
         private const char HORIZONTAL = '═';
@@ -40,11 +55,24 @@ namespace RogueProject
         private const byte REGION_HT = 8;
         private const byte MAP_WD = 78;                 // Based on screen width and height of 80 x 25
         private const byte MAP_HT = 24;                 // these values keep the map within the borders
-        private const byte MAX_ROOM_WT = 24;
-        private const byte MAX_ROOM_HT = 6;
+        private const byte MAX_ROOM_WT = 22;
+        private const byte MAX_ROOM_HT = 5;
         private const byte MIN_ROOM_WT = 4;
         private const byte MIN_ROOM_HT = 4;
 
+        // Regional boundaries for room generation in order of north_y, east_x, south_y, and west_x
+        private Dictionary<int, List<int>> regionBoundaries = new Dictionary<int, List<int>>
+        {
+            { 1, new List<int> { 1, 24, 6, 1 }},
+            { 2, new List<int> { 1, 50, 6, 27}},
+            { 3, new List<int> { 1, 76, 6, 53 }},
+            { 4, new List<int> { 9, 24, 14, 1 }},
+            { 5, new List<int> { 9, 50, 14, 27 }},
+            { 6, new List<int> { 9, 76, 14, 53 }},
+            { 7, new List<int> { 17, 24, 22, 1 }},
+            { 8, new List<int> { 17, 50, 22, 27 }},
+            { 9, new List<int> { 17, 76, 22, 53 }},
+        };
 
         private const byte ROOM_CREATE_PCT = 90;        // Probability that a room will be created
         private const byte ROOM_EXIT_PCT = 90;          // Probablity that a room has an exit
@@ -71,6 +99,7 @@ namespace RogueProject
             int roomHeight = 0;
             int roomAnchorX = 0;
             int roomAnchorY = 0;
+            int region = 1;
 
             levelMap = new MapSpace[80, 25];
 
@@ -85,9 +114,11 @@ namespace RogueProject
                         roomAnchorY = (int)((REGION_HT - roomHeight) / 2) + y;
                         roomAnchorX = (int)((REGION_WD - roomWidth) / 2) + x;
 
-                        // Create room - let's section this out in its own procedure
-                        RoomGeneration(roomAnchorX, roomAnchorY, roomWidth, roomHeight);
+                        // Create room
+                        RoomGeneration(roomAnchorX, roomAnchorY, roomWidth, roomHeight, region);
                     }
+
+                    region++;
                 }
             }
 
@@ -96,18 +127,35 @@ namespace RogueProject
                 for (int x = 0; x <= levelMap.GetUpperBound(0); x++)
                 {
                     if (levelMap[x, y] is null)
-                        levelMap[x, y] = new MapSpace(' ', false, false, x, y);
+                        levelMap[x, y] = new MapSpace(EMPTY, false, false, x, y);
                 }
             }
 
-            /*HallwayGeneration();*/
+            HallwayGeneration();
 
             AddStairway();
         }
 
-        private void RoomGeneration(int westWallX, int northWallY, int roomWidth, int roomHeight) {
+        private void RoomGeneration(int westWallX, int northWallY, int roomWidth, int roomHeight, int region) {
             int eastWallX = westWallX + roomWidth;
             int southWallY = northWallY + roomHeight;
+
+            // If room dimensions exceed region boundaries, set said dimenion back to the boundary limit
+            if (northWallY < regionBoundaries[region][0]) {
+                northWallY = regionBoundaries[region][0];
+            }
+
+            if (eastWallX > regionBoundaries[region][1]) {
+                eastWallX = regionBoundaries[region][1];
+            }
+
+            if (southWallY > regionBoundaries[region][2]) {
+                southWallY = regionBoundaries[region][2];
+            }
+
+            if (westWallX < regionBoundaries[region][3]) {
+                westWallX = regionBoundaries[region][3];
+            }
 
             int regionNumber = GetRegionNumber(westWallX, northWallY);
             int doorway = 0;
@@ -142,10 +190,10 @@ namespace RogueProject
                     levelMap[doorway, northWallY] = new MapSpace(ROOM_DOOR, false, false, doorway, northWallY);
 
                     // create new hallway space one square further away in same direction
-                    levelMap[doorway, northWallY - 1] = new MapSpace(HALLWAY, false, false, doorway, northWallY - 1);
+                    levelMap[doorway, northWallY - 1] = new MapSpace(EMPTY, false, false, doorway, northWallY - 1);
 
                     // add to deadends dictionary
-                    deadEnds.Add(levelMap[doorway, northWallY - 1], Direction.North);
+                    allDoorways[regionNumber].Add(levelMap[doorway, northWallY - 1]);
 
                     // Increment door count
                     doorCount += 1;
@@ -157,9 +205,9 @@ namespace RogueProject
 
                     levelMap[doorway, southWallY] = new MapSpace(ROOM_DOOR, false, false, doorway, southWallY);
 
-                    levelMap[doorway, southWallY + 1] = new MapSpace(HALLWAY, false, false, doorway, southWallY + 1);
+                    levelMap[doorway, southWallY + 1] = new MapSpace(EMPTY, false, false, doorway, southWallY + 1);
 
-                    deadEnds.Add(levelMap[doorway, southWallY + 1], Direction.South);
+                    allDoorways[regionNumber].Add(levelMap[doorway, southWallY + 1]);
 
                     doorCount += 1;
                 }
@@ -170,9 +218,9 @@ namespace RogueProject
 
                     levelMap[eastWallX, doorway] = new MapSpace(ROOM_DOOR, false, false, eastWallX, doorway);
 
-                    levelMap[eastWallX + 1, doorway] = new MapSpace(HALLWAY, false, false, eastWallX + 1, doorway);
+                    levelMap[eastWallX + 1, doorway] = new MapSpace(EMPTY, false, false, eastWallX + 1, doorway);
 
-                    deadEnds.Add(levelMap[eastWallX + 1, doorway], Direction.East);
+                    allDoorways[regionNumber].Add(levelMap[eastWallX + 1, doorway]);
 
                     doorCount += 1;
                 }
@@ -183,9 +231,9 @@ namespace RogueProject
 
                     levelMap[westWallX, doorway] = new MapSpace(ROOM_DOOR, false, false, westWallX, doorway);
 
-                    levelMap[westWallX - 1, doorway] = new MapSpace(HALLWAY, false, false, westWallX - 1, doorway);
+                    levelMap[westWallX - 1, doorway] = new MapSpace(EMPTY, false, false, westWallX - 1, doorway);
 
-                    deadEnds.Add(levelMap[westWallX - 1, doorway], Direction.West);
+                    allDoorways[regionNumber].Add(levelMap[westWallX - 1, doorway]);
 
                     doorCount += 1;
                 }
@@ -214,6 +262,182 @@ namespace RogueProject
             levelMap[x, y] = new MapSpace(STAIRWAY, x, y);
         }
 
+        private Tuple<MapSpace, MapSpace> ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
+            {
+            MapSpace closestDoorwayInCurrentRegion = null;
+            MapSpace closestDoorwayInOtherRegion = null;
+            int shortestDistance = int.MaxValue;
+
+            int verticalWeight = 3;
+
+            foreach (MapSpace currentRegionDoorway in doorwaysWithoutCorridorsInCurrentRegion)
+            {
+                foreach (KeyValuePair<int, List<MapSpace>> otherRegionDoorways in allDoorwaysWithoutCorridors)
+                {
+                    if (otherRegionDoorways.Key == currentRegionDoorway.Region)
+                    {
+                        continue; // Skip the current region
+                    }
+
+                    foreach (MapSpace otherRegionDoorway in otherRegionDoorways.Value)
+                    {
+                        // Applies manhattan alg to determine distance
+                        int currentDistance = Math.Abs(currentRegionDoorway.X - otherRegionDoorway.X) + Math.Abs(currentRegionDoorway.Y - otherRegionDoorway.Y) * verticalWeight;
+                        if (currentDistance < shortestDistance)
+                        {
+                            shortestDistance = currentDistance;
+                            closestDoorwayInCurrentRegion = currentRegionDoorway;
+                            closestDoorwayInOtherRegion = otherRegionDoorway;
+                        }
+                    }
+                }
+            }
+
+            if (closestDoorwayInCurrentRegion == null || closestDoorwayInOtherRegion == null)
+            {
+                // No valid path found
+                return null;
+            }
+
+            return new Tuple<MapSpace, MapSpace>(closestDoorwayInCurrentRegion, closestDoorwayInOtherRegion);
+        }
+
+        private void CheckNeighbourValidty(List<MapSpace> openSet, List<MapSpace> closedSet, MapSpace currentPosition, int xDifference, int yDifference, MapSpace goalPosition, MapSpace startingPosition)
+        {
+            int newX = currentPosition.X + xDifference;
+            int newY = currentPosition.Y + yDifference;
+
+            if (newX > 0 && newX < MAP_WD && newY > 0 && newY < MAP_HT)
+            {
+                MapSpace possibleSuccessor = new MapSpace(levelMap[newX, newY].MapCharacter, newX, newY);
+
+                if ((!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y))
+                    && possibleSuccessor.MapCharacter == EMPTY
+                    && levelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != HALLWAY
+                    && levelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != HALLWAY
+                    && levelMap[possibleSuccessor.X, possibleSuccessor.Y - 1].MapCharacter != HALLWAY
+                    && levelMap[possibleSuccessor.X - 1, possibleSuccessor.Y].MapCharacter != HALLWAY)
+                {
+                    int verticalWeight = 3;
+
+                    int g = Math.Abs(startingPosition.X - possibleSuccessor.X) + Math.Abs(startingPosition.Y - possibleSuccessor.Y) * verticalWeight;
+
+                    // Applies manhattan for heuristic
+                    int h = Math.Abs(possibleSuccessor.X - goalPosition.X) + Math.Abs(possibleSuccessor.Y - goalPosition.Y) * verticalWeight;
+
+                    int f = g + h;
+
+                    MapSpace existingNode = openSet.Find(n => n.X == possibleSuccessor.X && n.Y == possibleSuccessor.Y);
+                    if (existingNode == null || (existingNode.FCost.HasValue && f < existingNode.FCost.Value))
+                    {
+                        possibleSuccessor.GCost = g;
+                        possibleSuccessor.HCost = h;
+                        possibleSuccessor.FCost = f;
+                        possibleSuccessor.Parent = currentPosition;
+
+                        if (existingNode != null)
+                        {
+                            openSet.Remove(existingNode);
+                        }
+
+                        openSet.Add(possibleSuccessor);
+                    }
+                }
+            }
+        }
+
+        private List<MapSpace> AStar(MapSpace startingPosition, MapSpace goalPosition)
+        {
+            List<MapSpace> openSet = new List<MapSpace>();
+            List<MapSpace> closedSet = new List<MapSpace>();
+            List<MapSpace> path = new List<MapSpace>();
+
+            openSet.Add(startingPosition);
+
+            while (openSet.Count > 0)
+            {
+                // Find the node with the lowest f-cost in the open set
+                MapSpace currentNode = openSet.OrderBy(n => n.FCost).First();
+
+                // If the current node is the goal, reconstruct the path and return it
+                if (currentNode.X == goalPosition.X && currentNode.Y == goalPosition.Y)
+                {
+                    while (currentNode != startingPosition)
+                    {
+                        path.Insert(0, currentNode);
+                        currentNode = currentNode.Parent;
+                    }
+                    path.Insert(0, startingPosition);
+                    return path;
+                }
+
+                openSet.Remove(currentNode);
+                closedSet.Add(currentNode);
+
+                // Generate successors and add them to the open set
+                CheckNeighbourValidty(openSet, closedSet, currentNode, 0, 1, goalPosition, startingPosition);
+                CheckNeighbourValidty(openSet, closedSet, currentNode, 1, 0, goalPosition, startingPosition);
+                CheckNeighbourValidty(openSet, closedSet, currentNode, 0, -1, goalPosition, startingPosition);
+                CheckNeighbourValidty(openSet, closedSet, currentNode, -1, 0, goalPosition, startingPosition);
+            }
+
+            // If no path is found, return an empty list
+            return path;
+        }
+
+        private void HallwayGeneration()
+        {
+            Dictionary<int, List<MapSpace>> doorwaysWithoutCorridors = allDoorways;
+
+            for (int region = 1; region <= 9; region++)
+            {
+                // Get the list of doorways for the current region
+                if (doorwaysWithoutCorridors.TryGetValue(region, out List<MapSpace> regionDoorways))
+                {
+                    while (regionDoorways.Count > 0)
+                    {
+                        Tuple<MapSpace, MapSpace> closestDoorAndTargetDoor = ClosestDoorway(regionDoorways, doorwaysWithoutCorridors);
+
+                        // Check if a door could be found, create deadend otherwise
+                        if (closestDoorAndTargetDoor == null || closestDoorAndTargetDoor.Item1 == null || closestDoorAndTargetDoor.Item2 == null)
+                        {
+                            // Create deadend
+
+                            break;
+                        }
+
+                        List<MapSpace> path = AStar(closestDoorAndTargetDoor.Item1, closestDoorAndTargetDoor.Item2);
+
+                        if (path.Count > 30 || path.Count == 0) {
+                            // Create deadend
+
+                            break;
+                        }
+
+                        foreach (MapSpace space in path)
+                        {
+                            space.MapCharacter = HALLWAY;
+                            space.DisplayCharacter = HALLWAY;
+
+                            levelMap[space.X, space.Y] = space;
+                        }
+
+                        // Remove door from current region that has had a path created
+                        List<MapSpace> updatedRegionDoorways = new List<MapSpace>(doorwaysWithoutCorridors[region]);
+                        updatedRegionDoorways.Remove(closestDoorAndTargetDoor.Item1);
+                        doorwaysWithoutCorridors[region] = updatedRegionDoorways;
+
+                        // Remove goal door from all doors without corridors list
+                        List<MapSpace> updatedOtherRegionDoorways = new List<MapSpace>(doorwaysWithoutCorridors[closestDoorAndTargetDoor.Item2.Region]);
+                        updatedOtherRegionDoorways.Remove(closestDoorAndTargetDoor.Item2);
+                        doorwaysWithoutCorridors[closestDoorAndTargetDoor.Item2.Region] = updatedOtherRegionDoorways;
+
+                        regionDoorways.Remove(closestDoorAndTargetDoor.Item1);
+                    }
+                }
+            }
+        }
+
         public string MapText()
         {
             // Output the array to text for display.
@@ -230,7 +454,7 @@ namespace RogueProject
             return sbReturn.ToString();
         }
 
-        private int GetRegionNumber(int RoomAnchorX, int RoomAnchorY) {
+        public static int GetRegionNumber(int RoomAnchorX, int RoomAnchorY) {
             // Map is divided into a 3x3 grid of 9 equal regions
             // This function returns 1-9 depending on the region the given room exists in
 
@@ -244,12 +468,17 @@ namespace RogueProject
             return returnVal;
         }
 
-        internal class MapSpace { 
+        internal class MapSpace {
             public char MapCharacter { get; set; }
             public char DisplayCharacter { get; set; }
             public bool SearchRequired { get; set; }    // Certain items like trap doors and exists need a 
             public int X { get; set; }                  // special key before they can be seen
             public int Y { get; set; }
+            public int Region { get; set; } = 0;
+            public int? GCost { get; set; } // Cost from the start to this node
+            public int? HCost { get; set; } // Heuristic cost to the goal
+            public int? FCost { get; set; } // Total cost (g + h)
+            public MapSpace? Parent { get; set; } // Parent node in the path
 
             public MapSpace() {
                 // Create blank space for map
@@ -267,6 +496,7 @@ namespace RogueProject
                 this.SearchRequired = false;
                 this.X = X;
                 this.Y = Y;
+                this.Region = GetRegionNumber(X, Y);
             }
 
             public MapSpace(char mapChar, MapSpace oldSpace) {
@@ -276,6 +506,7 @@ namespace RogueProject
                 this.SearchRequired = oldSpace.SearchRequired;
                 this.X = oldSpace.X;
                 this.Y = oldSpace.Y;
+                this.Region = oldSpace.Region;
             }
 
             public MapSpace(char mapChar, bool hidden, bool search, int X, int Y) {
@@ -285,6 +516,7 @@ namespace RogueProject
                 this.SearchRequired = search;
                 this.X = X;
                 this.Y = Y;
+                this.Region = GetRegionNumber(X, Y);
             }
         }
     }
