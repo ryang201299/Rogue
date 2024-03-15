@@ -85,11 +85,11 @@ namespace RogueProject
         private MapSpace[,] levelMap = new MapSpace[80, 25];
 
         public MapLevel() {
-            MapGeneration();
-
- /*           while (!VerifyMap()) {
-                MapGeneration();    
-            }*/
+            do
+            {
+                MapGeneration();
+                Debug.WriteLine(MapText());
+            } while (!MapVerification());
         }
 
         private void MapGeneration()
@@ -436,6 +436,99 @@ namespace RogueProject
                     }
                 }
             }
+        }
+
+        public MapSpace GetStartingSpace()
+        {
+            foreach (MapSpace space in levelMap)
+            {
+                if (space.MapCharacter == ROOM_INT)
+                {
+                    return space;
+                }
+            }
+
+            return null;
+        }
+
+        public bool IsValidSpace(MapSpace space) {
+            return space.MapCharacter == ROOM_INT || space.MapCharacter == HALLWAY || space.MapCharacter == ROOM_DOOR;
+        }
+
+        public List<MapSpace> GetValidNeighbours(MapSpace space) {
+            List<MapSpace> validNeighbours = new List<MapSpace>();
+
+            if (IsValidSpace(levelMap[space.X, space.Y + 1])) {
+                validNeighbours.Add(levelMap[space.X, space.Y + 1]);
+            }
+
+            if (IsValidSpace(levelMap[space.X + 1, space.Y]))
+            {
+                validNeighbours.Add(levelMap[space.X + 1, space.Y]);
+            }
+
+            if (IsValidSpace(levelMap[space.X, space.Y - 1]))
+            {
+                validNeighbours.Add(levelMap[space.X, space.Y - 1]);
+            }
+
+            if (IsValidSpace(levelMap[space.X - 1, space.Y]))
+            {
+                validNeighbours.Add(levelMap[space.X - 1, space.Y]);
+            }
+
+            return validNeighbours;
+        }
+
+
+        public bool MapVerification()
+        {
+            List<int> regionsWithRooms = new List<int>();
+
+            foreach (KeyValuePair<int, List<MapSpace>> region in allDoorways)
+            {
+                if (region.Value.Count > 0)
+                {
+                    regionsWithRooms.Add(region.Key);
+                }
+            }
+
+            // Get the starting cell coordinates
+            MapSpace startingSpace = GetStartingSpace();
+
+            if (startingSpace == null) {
+                throw new Exception("No starting point found");
+            }
+
+            Queue<MapSpace> queue = new Queue<MapSpace>();
+            HashSet<MapSpace> visited = new HashSet<MapSpace>();
+
+            queue.Enqueue(startingSpace);
+            visited.Add(startingSpace);
+
+            while (queue.Count > 0)
+            {
+                MapSpace currentSpace = queue.Dequeue();
+
+                // Check if the current cell is a valid room in any region
+
+                if (regionsWithRooms.Contains(currentSpace.Region))
+                {
+                    regionsWithRooms.Remove(currentSpace.Region);
+                }
+
+                // Explore neighboring cells
+                foreach (MapSpace neighbor in GetValidNeighbours(currentSpace))
+                {
+                    if (!visited.Contains(neighbor))
+                    {
+                        queue.Enqueue(neighbor);
+                        visited.Add(neighbor);
+                    }
+                }
+            }
+
+            return true ? regionsWithRooms.Count == 0 : false;
         }
 
         public string MapText()
