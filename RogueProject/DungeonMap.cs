@@ -7,6 +7,11 @@ namespace RogueProject
             InitializeComponent();
         }
 
+/*        private void DungeonMain_Load(object sender, EventArgs e)
+        {
+            lblArray.Text = currentGame.CurrentMap.MapText();
+        }*/
+
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -24,9 +29,12 @@ namespace RogueProject
 
         private void LoadMapLevel()
         {
-            MapLevel newLevel = new MapLevel();
+            Game currentGame = new Game();
 
-            lblArray.Text = newLevel.MapText();
+            /*MapLevel newLevel = new MapLevel();*/
+            /*lblArray.Text = newLevel.MapText();*/
+
+            lblArray.Text = currentGame.CurrentMap.MapText();
             Application.DoEvents();
         }
 

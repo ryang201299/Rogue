@@ -19,24 +19,6 @@ namespace RogueProject
             West = -2
         }
 
-        // Dictionary to hold hallway endings during map generation
-        // Previously was MapSpace and Direction, but I care more about region than direction
-        private Dictionary<MapSpace, Direction> deadEnds =
-            new Dictionary<MapSpace, Direction>();
-
-        private Dictionary<int, List<MapSpace>> allDoorways = new Dictionary<int, List<MapSpace>>()
-        {
-            { 1, new List<MapSpace>() },
-            { 2, new List<MapSpace>() },
-            { 3, new List<MapSpace>() },
-            { 4, new List<MapSpace>() },
-            { 5, new List<MapSpace>() },
-            { 6, new List<MapSpace>() },
-            { 7, new List<MapSpace>() },
-            { 8, new List<MapSpace>() },
-            { 9, new List<MapSpace>() }
-        };
-
         // Box drawing constants and other symbols.
         private const char HORIZONTAL = '═';
         private const char VERTICAL = '║';
@@ -60,6 +42,9 @@ namespace RogueProject
         private const byte MIN_ROOM_WT = 4;
         private const byte MIN_ROOM_HT = 4;
 
+        private const byte ROOM_CREATE_PCT = 90;        // Probability that a room will be created
+        private const byte ROOM_EXIT_PCT = 90;          // Probablity that a room has an exit
+
         // Regional boundaries for room generation in order of north_y, east_x, south_y, and west_x
         private Dictionary<int, List<int>> regionBoundaries = new Dictionary<int, List<int>>
         {
@@ -74,21 +59,34 @@ namespace RogueProject
             { 9, new List<int> { 17, 76, 22, 53 }},
         };
 
-        private const byte ROOM_CREATE_PCT = 90;        // Probability that a room will be created
-        private const byte ROOM_EXIT_PCT = 90;          // Probablity that a room has an exit
-
-        // Array to hold map definition. Commented out until I found out if it's needed
-        /*        private MapSpace[,] levelMap {
-                    get { return levelMap; }
-                }*/
-
-        private MapSpace[,] levelMap = new MapSpace[80, 25];
+        // Dictionary to hold hallway endings during map generation
+        // Previously was MapSpace and Direction, but I care more about region than direction
+        private Dictionary<MapSpace, Direction> deadEnds;
+        private Dictionary<int, List<MapSpace>> allDoorways;
+        private MapSpace[,] levelMap;
 
         public MapLevel() {
             do
             {
+                this.levelMap = new MapSpace[80, 25];
+                this.allDoorways = new Dictionary<int, List<MapSpace>>()
+                {
+                    { 1, new List<MapSpace>() },
+                    { 2, new List<MapSpace>() },
+                    { 3, new List<MapSpace>() },
+                    { 4, new List<MapSpace>() },
+                    { 5, new List<MapSpace>() },
+                    { 6, new List<MapSpace>() },
+                    { 7, new List<MapSpace>() },
+                    { 8, new List<MapSpace>() },
+                    { 9, new List<MapSpace>() }
+                };
+
+                this.deadEnds = new Dictionary<MapSpace, Direction>();
+
                 MapGeneration();
                 Debug.WriteLine(MapText());
+
             } while (!MapVerification());
         }
 
@@ -268,7 +266,7 @@ namespace RogueProject
             MapSpace closestDoorwayInOtherRegion = null;
             int shortestDistance = int.MaxValue;
 
-            int verticalWeight = 3;
+            int verticalWeight = 2;
 
             foreach (MapSpace currentRegionDoorway in doorwaysWithoutCorridorsInCurrentRegion)
             {
@@ -387,7 +385,12 @@ namespace RogueProject
 
         private void HallwayGeneration()
         {
-            Dictionary<int, List<MapSpace>> doorwaysWithoutCorridors = allDoorways;
+            Dictionary<int, List<MapSpace>> doorwaysWithoutCorridors = new Dictionary<int, List<MapSpace>>();
+
+            foreach (var entry in allDoorways)
+            {
+                doorwaysWithoutCorridors.Add(entry.Key, new List<MapSpace>(entry.Value));
+            }
 
             for (int region = 1; region <= 9; region++)
             {
@@ -422,15 +425,8 @@ namespace RogueProject
                             levelMap[space.X, space.Y] = space;
                         }
 
-                        // Remove door from current region that has had a path created
-                        List<MapSpace> updatedRegionDoorways = new List<MapSpace>(doorwaysWithoutCorridors[region]);
-                        updatedRegionDoorways.Remove(closestDoorAndTargetDoor.Item1);
-                        doorwaysWithoutCorridors[region] = updatedRegionDoorways;
-
-                        // Remove goal door from all doors without corridors list
-                        List<MapSpace> updatedOtherRegionDoorways = new List<MapSpace>(doorwaysWithoutCorridors[closestDoorAndTargetDoor.Item2.Region]);
-                        updatedOtherRegionDoorways.Remove(closestDoorAndTargetDoor.Item2);
-                        doorwaysWithoutCorridors[closestDoorAndTargetDoor.Item2.Region] = updatedOtherRegionDoorways;
+                        doorwaysWithoutCorridors[region].Remove(closestDoorAndTargetDoor.Item1);
+                        doorwaysWithoutCorridors[closestDoorAndTargetDoor.Item2.Region].Remove(closestDoorAndTargetDoor.Item2);
 
                         regionDoorways.Remove(closestDoorAndTargetDoor.Item1);
                     }
