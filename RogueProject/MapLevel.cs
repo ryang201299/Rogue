@@ -6,19 +6,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace RogueProject
 {
     internal class MapLevel {
-        private enum Direction
-        {
-            None = 0,
-            North = 1,
-            East = 2,
-            South = -1,
-            West = -2
-        }
-
         // Box drawing constants and other symbols.
         private const char HORIZONTAL = '═';
         private const char VERTICAL = '║';
@@ -31,6 +23,7 @@ namespace RogueProject
         private const char HALLWAY = '▓';
         private const char STAIRWAY = '≣';
         private const char EMPTY = ' ';
+        private const char GOLD = '*';
 
         // Map element boundaries
         private const byte REGION_WD = 26;
@@ -44,6 +37,7 @@ namespace RogueProject
 
         private const byte ROOM_CREATE_PCT = 90;        // Probability that a room will be created
         private const byte ROOM_EXIT_PCT = 90;          // Probablity that a room has an exit
+        private const int ROOM_GOLD_PCT = 65;           // Probability that gold spawns in a room
 
         // Regional boundaries for room generation in order of north_y, east_x, south_y, and west_x
         private Dictionary<int, List<int>> regionBoundaries = new Dictionary<int, List<int>>
@@ -61,7 +55,6 @@ namespace RogueProject
 
         // Dictionary to hold hallway endings during map generation
         // Previously was MapSpace and Direction, but I care more about region than direction
-        private Dictionary<MapSpace, Direction> deadEnds;
         private Dictionary<int, List<MapSpace>> allDoorways;
         private MapSpace[,] levelMap;
 
@@ -81,8 +74,6 @@ namespace RogueProject
                     { 8, new List<MapSpace>() },
                     { 9, new List<MapSpace>() }
                 };
-
-                this.deadEnds = new Dictionary<MapSpace, Direction>();
 
                 MapGeneration();
                 Debug.WriteLine(MapText());
@@ -242,6 +233,23 @@ namespace RogueProject
             levelMap[eastWallX, northWallY] = new MapSpace(CORNER_NE, false, false, eastWallX, northWallY);
             levelMap[westWallX, southWallY] = new MapSpace(CORNER_SW, false, false, westWallX, southWallY);
             levelMap[eastWallX, southWallY] = new MapSpace(CORNER_SE, false, false, eastWallX, southWallY);
+
+            // Evaluate for a gold stash
+            int goldX = westWallX; 
+            int goldY = northWallY;
+
+            if (rand.Next(1, 101) > ROOM_GOLD_PCT)
+            {
+                // Search the room randomly for an empty interior room space
+                // and mark it as a gold stash.
+                while (levelMap[goldX, goldY].MapCharacter != ROOM_INT)
+                {
+                    goldX = rand.Next(westWallX + 1, eastWallX);
+                    goldY = rand.Next(northWallY + 1, southWallY);
+                }
+
+                levelMap[goldX, goldY] = new MapSpace(GOLD, goldX, goldY);
+            }
         }
 
         private void AddStairway()

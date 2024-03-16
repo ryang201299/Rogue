@@ -1,16 +1,16 @@
+using System.Diagnostics;
+using System.Xml.Linq;
+
 namespace RogueProject
 {
     public partial class DungeonMain : Form
     {
+        private Game? currentGame;
+
         public DungeonMain()
         {
             InitializeComponent();
         }
-
-/*        private void DungeonMain_Load(object sender, EventArgs e)
-        {
-            lblArray.Text = currentGame.CurrentMap.MapText();
-        }*/
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -24,25 +24,43 @@ namespace RogueProject
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            LoadMapLevel();
-        }
-
-        private void LoadMapLevel()
-        {
-            Game currentGame = new Game();
-
-            /*MapLevel newLevel = new MapLevel();*/
-            /*lblArray.Text = newLevel.MapText();*/
-
-            lblArray.Text = currentGame.CurrentMap.MapText();
-            Application.DoEvents();
-        }
-
-        private void btnGenerate_Click(object sender, EventArgs e)
-        {
-            for (int i = 0; i < 101; i++) {
-                LoadMapLevel();
+            if (PlayerNameBox.TextLength > 0)
+            {
+                currentGame = new Game(PlayerNameBox.Text);
+                PlayerNamePanel.Visible = false;
+                lblArray.Text = currentGame.CurrentMap.MapText();
+                lblStatus.Text = currentGame.StatusMessage;
             }
+            else
+            {
+                MessageBox.Show("Please enter a name for your character.");
+            }
+        }
+
+        private void DungeonMain_KeyUp(object sender, KeyEventArgs e)
+        {
+            Debug.WriteLine("Key Up - " + e.KeyValue);
+        }
+
+        private void DungeonMain_KeyDown(object sender, KeyEventArgs e)
+        {
+            Debug.WriteLine("Key Down - " + e.KeyValue);
+
+            if (this.currentGame != null)
+            {
+                Debug.WriteLine("Success");
+                currentGame.KeyHandler(e.KeyValue);
+                lblArray.Text = currentGame.CurrentMap.MapText();
+                lblStatus.Text = currentGame.StatusMessage;
+            }
+            else {
+                Debug.WriteLine("Failure");
+            }
+        }
+
+        private void DungeonMain_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            Debug.WriteLine("Key Press - " + e.KeyChar);
         }
     }
 }
