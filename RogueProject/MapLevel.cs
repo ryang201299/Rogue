@@ -6,24 +6,25 @@ using System.Security.Cryptography.X509Certificates;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace RogueProject
 {
     internal class MapLevel {
         // Box drawing constants and other symbols.
-        private const char HORIZONTAL = '═';
-        private const char VERTICAL = '║';
-        private const char CORNER_NW = '╔';
-        private const char CORNER_SE = '╝';
-        private const char CORNER_NE = '╗';
-        private const char CORNER_SW = '╚';
-        private const char ROOM_INT = '.';
-        private const char ROOM_DOOR = '╬';
-        private const char HALLWAY = '▓';
-        private const char STAIRWAY = '≣';
-        private const char EMPTY = ' ';
-        private const char GOLD = '*';
+        public const char HORIZONTAL = '═';
+        public const char VERTICAL = '║';
+        public const char CORNER_NW = '╔';
+        public const char CORNER_SE = '╝';
+        public const char CORNER_NE = '╗';
+        public const char CORNER_SW = '╚';
+        public const char ROOM_INT = '.';
+        public const char ROOM_DOOR = '╬';
+        public const char HALLWAY = '▓';
+        public const char STAIRWAY = '≣';
+        public const char EMPTY = ' ';
+        public const char GOLD = '*';
 
         // Map element boundaries
         private const byte REGION_WD = 26;
@@ -56,7 +57,7 @@ namespace RogueProject
         // Dictionary to hold hallway endings during map generation
         // Previously was MapSpace and Direction, but I care more about region than direction
         private Dictionary<int, List<MapSpace>> allDoorways;
-        private MapSpace[,] levelMap;
+        public MapSpace[,] levelMap;
 
         public MapLevel() {
             do
@@ -76,8 +77,9 @@ namespace RogueProject
                 };
 
                 MapGeneration();
-                Debug.WriteLine(MapText());
-
+                /*Debug.WriteLine(MapText());*/
+/*                Application.DoEvents();
+*/
             } while (!MapVerification());
         }
 
@@ -116,7 +118,7 @@ namespace RogueProject
                 for (int x = 0; x <= levelMap.GetUpperBound(0); x++)
                 {
                     if (levelMap[x, y] is null)
-                        levelMap[x, y] = new MapSpace(EMPTY, false, false, x, y);
+                        levelMap[x, y] = new MapSpace(EMPTY, false, x, y);
                 }
             }
 
@@ -156,14 +158,14 @@ namespace RogueProject
                 for (int x = westWallX; x <= eastWallX; x++) {
                     if (y == northWallY || y == southWallY)
                     {
-                        levelMap[x, y] = new MapSpace(HORIZONTAL, false, false, x, y);
+                        levelMap[x, y] = new MapSpace(HORIZONTAL, false, x, y);
                     }
                     else if (x == westWallX || x == eastWallX)
                     {
-                        levelMap[x, y] = new MapSpace(VERTICAL, false, false, x, y);
+                        levelMap[x, y] = new MapSpace(VERTICAL, false, x, y);
                     }
                     else if (levelMap[x, y] == null) {
-                        levelMap[x, y] = new MapSpace(ROOM_INT, false, false, x, y);
+                        levelMap[x, y] = new MapSpace(ROOM_INT, false, x, y);
                     }
                 }
             }
@@ -176,10 +178,10 @@ namespace RogueProject
                     doorway = rand.Next(westWallX + 1, eastWallX);
 
                     // create new door space
-                    levelMap[doorway, northWallY] = new MapSpace(ROOM_DOOR, false, false, doorway, northWallY);
+                    levelMap[doorway, northWallY] = new MapSpace(ROOM_DOOR, false, doorway, northWallY);
 
                     // create new hallway space one square further away in same direction
-                    levelMap[doorway, northWallY - 1] = new MapSpace(EMPTY, false, false, doorway, northWallY - 1);
+                    levelMap[doorway, northWallY - 1] = new MapSpace(EMPTY, false, doorway, northWallY - 1);
 
                     // add to deadends dictionary
                     allDoorways[regionNumber].Add(levelMap[doorway, northWallY - 1]);
@@ -192,9 +194,9 @@ namespace RogueProject
                 if (regionNumber <= 6 && rand.Next(101) <= ROOM_EXIT_PCT) {
                     doorway = rand.Next(westWallX + 1, eastWallX);
 
-                    levelMap[doorway, southWallY] = new MapSpace(ROOM_DOOR, false, false, doorway, southWallY);
+                    levelMap[doorway, southWallY] = new MapSpace(ROOM_DOOR, false, doorway, southWallY);
 
-                    levelMap[doorway, southWallY + 1] = new MapSpace(EMPTY, false, false, doorway, southWallY + 1);
+                    levelMap[doorway, southWallY + 1] = new MapSpace(EMPTY, false, doorway, southWallY + 1);
 
                     allDoorways[regionNumber].Add(levelMap[doorway, southWallY + 1]);
 
@@ -205,9 +207,9 @@ namespace RogueProject
                 if ("147258".Contains(regionNumber.ToString()) && rand.Next(101) <= ROOM_EXIT_PCT) {
                     doorway = rand.Next(northWallY + 1, southWallY);
 
-                    levelMap[eastWallX, doorway] = new MapSpace(ROOM_DOOR, false, false, eastWallX, doorway);
+                    levelMap[eastWallX, doorway] = new MapSpace(ROOM_DOOR, false, eastWallX, doorway);
 
-                    levelMap[eastWallX + 1, doorway] = new MapSpace(EMPTY, false, false, eastWallX + 1, doorway);
+                    levelMap[eastWallX + 1, doorway] = new MapSpace(EMPTY, false, eastWallX + 1, doorway);
 
                     allDoorways[regionNumber].Add(levelMap[eastWallX + 1, doorway]);
 
@@ -218,9 +220,9 @@ namespace RogueProject
                 if ("258369".Contains(regionNumber.ToString()) && rand.Next(101) <= ROOM_EXIT_PCT) {
                     doorway = rand.Next(northWallY + 1, southWallY);
 
-                    levelMap[westWallX, doorway] = new MapSpace(ROOM_DOOR, false, false, westWallX, doorway);
+                    levelMap[westWallX, doorway] = new MapSpace(ROOM_DOOR, false, westWallX, doorway);
 
-                    levelMap[westWallX - 1, doorway] = new MapSpace(EMPTY, false, false, westWallX - 1, doorway);
+                    levelMap[westWallX - 1, doorway] = new MapSpace(EMPTY, false, westWallX - 1, doorway);
 
                     allDoorways[regionNumber].Add(levelMap[westWallX - 1, doorway]);
 
@@ -229,10 +231,10 @@ namespace RogueProject
             }
 
             // Lastly, the corners are filled in
-            levelMap[westWallX, northWallY] = new MapSpace(CORNER_NW, false, false, westWallX, northWallY);
-            levelMap[eastWallX, northWallY] = new MapSpace(CORNER_NE, false, false, eastWallX, northWallY);
-            levelMap[westWallX, southWallY] = new MapSpace(CORNER_SW, false, false, westWallX, southWallY);
-            levelMap[eastWallX, southWallY] = new MapSpace(CORNER_SE, false, false, eastWallX, southWallY);
+            levelMap[westWallX, northWallY] = new MapSpace(CORNER_NW, false, westWallX, northWallY);
+            levelMap[eastWallX, northWallY] = new MapSpace(CORNER_NE, false, eastWallX, northWallY);
+            levelMap[westWallX, southWallY] = new MapSpace(CORNER_SW, false, westWallX, southWallY);
+            levelMap[eastWallX, southWallY] = new MapSpace(CORNER_SE, false, eastWallX, southWallY);
 
             // Evaluate for a gold stash
             int goldX = westWallX; 
@@ -428,7 +430,6 @@ namespace RogueProject
                         foreach (MapSpace space in path)
                         {
                             space.MapCharacter = HALLWAY;
-                            space.DisplayCharacter = HALLWAY;
 
                             levelMap[space.X, space.Y] = space;
                         }
@@ -535,6 +536,43 @@ namespace RogueProject
             return true ? regionsWithRooms.Count == 0 : false;
         }
 
+        public MapSpace PlaceMapCharacter(char MapChar, bool Living)
+        {
+            // Find a random space within one of the rooms that 
+            // hasn't been occupied and return the array reference.
+
+            Random rand = new Random();
+            int xPos = 1, yPos = 1;
+            bool freeSpace = false;
+
+            while (!freeSpace)
+            {
+                xPos = rand.Next(1, MAP_WD);
+                yPos = rand.Next(1, MAP_HT);
+
+                freeSpace = (levelMap[xPos, yPos].MapCharacter == ROOM_INT)
+                    && levelMap[xPos, yPos].DisplayCharacter == null
+                    && levelMap[xPos, yPos].ItemCharacter == null;
+            }
+
+            // If the character is for the player or a monster, add
+            // it to the Display character. Otherwise, use the item character.
+            if (Living)
+                levelMap[xPos, yPos].DisplayCharacter = MapChar;
+            else
+                levelMap[xPos, yPos].ItemCharacter = MapChar;
+
+            return levelMap[xPos, yPos];
+        }
+
+        public void MoveDisplayItem(Player player, MapSpace newLocation) {
+            newLocation.DisplayCharacter = player.Location.DisplayCharacter;
+
+            player.Location.DisplayCharacter = null;
+
+            player.Location = newLocation;
+        }
+
         public string MapText()
         {
             // Output the array to text for display.
@@ -543,7 +581,15 @@ namespace RogueProject
             for (int y = 0; y <= MAP_HT; y++)
             {
                 for (int x = 0; x <= MAP_WD; x++)
-                    sbReturn.Append(levelMap[x, y].DisplayCharacter);
+                    if (levelMap[x, y].Visible)
+                    {
+                        if (levelMap[x, y].DisplayCharacter != null)
+                            sbReturn.Append(levelMap[x, y].DisplayCharacter);
+                        else if (levelMap[x, y].ItemCharacter != null)
+                            sbReturn.Append(levelMap[x, y].ItemCharacter);
+                        else
+                            sbReturn.Append(levelMap[x, y].MapCharacter);
+                    }
 
                 sbReturn.Append("\n");
             }
@@ -567,20 +613,21 @@ namespace RogueProject
 
         internal class MapSpace {
             public char MapCharacter { get; set; }
-            public char DisplayCharacter { get; set; }
+            public char? ItemCharacter { get; set; } = null;
+            public char? DisplayCharacter { get; set; } = null;
             public bool SearchRequired { get; set; }    // Certain items like trap doors and exists need a 
+            public bool Visible { get; set; } = true;
             public int X { get; set; }                  // special key before they can be seen
             public int Y { get; set; }
             public int Region { get; set; } = 0;
-            public int? GCost { get; set; } // Cost from the start to this node
-            public int? HCost { get; set; } // Heuristic cost to the goal
-            public int? FCost { get; set; } // Total cost (g + h)
-            public MapSpace? Parent { get; set; } // Parent node in the path
+            public int? GCost { get; set; }             // Cost from the start to this node
+            public int? HCost { get; set; }             // Heuristic cost to the goal
+            public int? FCost { get; set; }             // Total cost (g + h)
+            public MapSpace? Parent { get; set; }       // Parent node in the path
 
             public MapSpace() {
                 // Create blank space for map
                 this.MapCharacter = ' ';
-                this.DisplayCharacter = ' ';
                 this.SearchRequired = false;
                 X = 0;
                 Y = 0;
@@ -589,7 +636,6 @@ namespace RogueProject
             public MapSpace(char mapChar, int X, int Y) {
                 // Create a non-blank space
                 this.MapCharacter = mapChar;
-                this.DisplayCharacter = mapChar;
                 this.SearchRequired = false;
                 this.X = X;
                 this.Y = Y;
@@ -599,17 +645,15 @@ namespace RogueProject
             public MapSpace(char mapChar, MapSpace oldSpace) {
                 // Update value for an existing space
                 this.MapCharacter = mapChar;
-                this.DisplayCharacter = mapChar;
                 this.SearchRequired = oldSpace.SearchRequired;
                 this.X = oldSpace.X;
                 this.Y = oldSpace.Y;
                 this.Region = oldSpace.Region;
             }
 
-            public MapSpace(char mapChar, bool hidden, bool search, int X, int Y) {
+            public MapSpace(char mapChar, bool search, int X, int Y) {
                 // Allows for setting objects to be displayed or hidden
                 this.MapCharacter = mapChar;
-                this.DisplayCharacter = hidden ? ' ' : mapChar;
                 this.SearchRequired = search;
                 this.X = X;
                 this.Y = Y;

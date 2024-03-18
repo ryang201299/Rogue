@@ -51,7 +51,7 @@
             btnStart.Anchor = AnchorStyles.None;
             btnStart.BackColor = Color.Black;
             btnStart.ForeColor = Color.FromArgb(255, 128, 0);
-            btnStart.Location = new Point(651, 23);
+            btnStart.Location = new Point(702, 61);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(111, 33);
             btnStart.TabIndex = 2;
@@ -64,7 +64,7 @@
             lblArray.Dock = DockStyle.Fill;
             lblArray.Location = new Point(0, 0);
             lblArray.Name = "lblArray";
-            lblArray.Size = new Size(995, 635);
+            lblArray.Size = new Size(1097, 711);
             lblArray.TabIndex = 4;
             lblArray.TextAlign = ContentAlignment.TopCenter;
             lblArray.Click += lblArray_Click;
@@ -77,14 +77,14 @@
             PlayerNamePanel.Controls.Add(btnStart);
             PlayerNamePanel.Location = new Point(96, 198);
             PlayerNamePanel.Name = "PlayerNamePanel";
-            PlayerNamePanel.Size = new Size(779, 73);
+            PlayerNamePanel.Size = new Size(881, 149);
             PlayerNamePanel.TabIndex = 5;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(12, 23);
+            label1.Location = new Point(63, 61);
             label1.Name = "label1";
             label1.Size = new Size(350, 28);
             label1.TabIndex = 3;
@@ -96,7 +96,7 @@
             PlayerNameBox.BackColor = SystemColors.InfoText;
             PlayerNameBox.BorderStyle = BorderStyle.FixedSingle;
             PlayerNameBox.ForeColor = SystemColors.Window;
-            PlayerNameBox.Location = new Point(362, 23);
+            PlayerNameBox.Location = new Point(413, 61);
             PlayerNameBox.Name = "PlayerNameBox";
             PlayerNameBox.Size = new Size(283, 35);
             PlayerNameBox.TabIndex = 0;
@@ -106,7 +106,7 @@
             AutoScaleDimensions = new SizeF(13F, 27F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(995, 635);
+            ClientSize = new Size(1097, 711);
             Controls.Add(PlayerNamePanel);
             Controls.Add(lblStatus);
             Controls.Add(lblArray);

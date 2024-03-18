@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static RogueProject.MapLevel;
 
 namespace RogueProject
 {
@@ -13,6 +14,7 @@ namespace RogueProject
         public const int MAX_FOODVALUE = 1700;
         public const int MIN_FOODVALUE = 900;
         private const int HUNGER_TURNS = 150;
+        public const char CHARACTER = '☺';
 
         public enum HungerLevel
         {
@@ -31,6 +33,7 @@ namespace RogueProject
         public int Experience { get; set; }
         public HungerLevel HungerState { get; set; }
         public int HungerTurn { get; set; }
+        public MapSpace? Location { get; set; }
 
         public Player(string PlayerName)
         {
