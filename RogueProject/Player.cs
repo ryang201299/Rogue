@@ -34,6 +34,7 @@ namespace RogueProject
         public HungerLevel HungerState { get; set; }
         public int HungerTurn { get; set; }
         public MapSpace? Location { get; set; }
+        public bool HasAmulet { get; set; }
 
         public Player(string PlayerName)
         {

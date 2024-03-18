@@ -25,6 +25,7 @@ namespace RogueProject
         public const char STAIRWAY = '≣';
         public const char EMPTY = ' ';
         public const char GOLD = '*';
+        public const char AMULET = '♀';
 
         // Map element boundaries
         private const byte REGION_WD = 26;
@@ -39,6 +40,9 @@ namespace RogueProject
         private const byte ROOM_CREATE_PCT = 90;        // Probability that a room will be created
         private const byte ROOM_EXIT_PCT = 90;          // Probablity that a room has an exit
         private const int ROOM_GOLD_PCT = 65;           // Probability that gold spawns in a room
+
+        public const int MIN_GOLD_AMOUNT = 10;
+        public const int MAX_GOLD_AMOUNT = 125;
 
         // Regional boundaries for room generation in order of north_y, east_x, south_y, and west_x
         private Dictionary<int, List<int>> regionBoundaries = new Dictionary<int, List<int>>
@@ -250,7 +254,7 @@ namespace RogueProject
                     goldY = rand.Next(northWallY + 1, southWallY);
                 }
 
-                levelMap[goldX, goldY] = new MapSpace(GOLD, goldX, goldY);
+                levelMap[goldX, goldY].ItemCharacter = GOLD;
             }
         }
 
@@ -569,6 +573,10 @@ namespace RogueProject
             newLocation.DisplayCharacter = player.Location.DisplayCharacter;
 
             player.Location.DisplayCharacter = null;
+
+            if (player.Location.ItemCharacter != null) {
+                player.Location.ItemCharacter = null;
+            }
 
             player.Location = newLocation;
         }

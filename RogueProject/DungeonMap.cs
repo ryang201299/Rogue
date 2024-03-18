@@ -30,6 +30,7 @@ namespace RogueProject
                 PlayerNamePanel.Visible = false;
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
+                lblStats.Text = currentGame.Stats;
             }
             else
             {
@@ -48,13 +49,11 @@ namespace RogueProject
 
             if (this.currentGame != null)
             {
-                if (e.KeyValue >= 37 && e.KeyValue <= 40) {
-                    currentGame.MoveCharacter(currentGame.CurrentPlayer, e.KeyValue);
-                }
+                currentGame.KeyHandler(e.KeyValue, e.Shift);
 
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
-
+                lblStats.Text = currentGame.Stats;
             }
         }
 
