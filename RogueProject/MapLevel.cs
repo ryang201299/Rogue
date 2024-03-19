@@ -58,6 +58,19 @@ namespace RogueProject
             { 9, new List<int> { 17, 76, 22, 53 }},
         };
 
+        public Dictionary<string, int[]> directions = new Dictionary<string, int[]> {
+            { "East",      new int[] {  1,  0 } },
+            { "West",      new int[] { -1,  0 } },
+            { "North",     new int[] {  0, -1 } },
+            { "South",     new int[] {  0, +1 } },
+            { "NorthEast", new int[] {  1, -1 } },
+            { "NorthWest", new int[] { -1, -1 } },
+            { "SouthWest", new int[] { -1, +1 } },
+            { "SouthEast", new int[] {  1, +1 } }
+        };
+
+        List<MapSpace> spacesSurroundingPlayer;
+
         // Dictionary to hold hallway endings during map generation
         // Previously was MapSpace and Direction, but I care more about region than direction
         private Dictionary<int, List<MapSpace>> allDoorways;
@@ -82,9 +95,45 @@ namespace RogueProject
 
                 MapGeneration();
                 /*Debug.WriteLine(MapText());*/
-/*                Application.DoEvents();
-*/
+                /*                Application.DoEvents();
+                */
+
+                foreach (MapSpace space in levelMap) {
+                    space.Visible = false;
+                }
+
             } while (!MapVerification());
+        }
+
+        public MapSpace PlayersLocation() {
+            MapSpace playerLocation = new MapSpace();
+
+            foreach (MapSpace space in levelMap) {
+                if (space.DisplayCharacter == '☺') {
+                    playerLocation = space;
+                    break;
+                }
+            }
+
+            return playerLocation;
+        }
+
+        public List<MapSpace> SpacesSurroundingPlayer(MapSpace playerLocation) {
+            List<MapSpace> surroundingSpaces =
+            [
+                levelMap[playerLocation.X + 1, playerLocation.Y],
+                levelMap[playerLocation.X - 1, playerLocation.Y],
+                levelMap[playerLocation.X, playerLocation.Y + 1],
+                levelMap[playerLocation.X, playerLocation.Y - 1],
+
+                levelMap[playerLocation.X + 1, playerLocation.Y - 1],
+                levelMap[playerLocation.X - 1, playerLocation.Y - 1],
+
+                levelMap[playerLocation.X + 1, playerLocation.Y + 1],
+                levelMap[playerLocation.X - 1, playerLocation.Y + 1],
+            ];
+
+            return surroundingSpaces;
         }
 
         private void MapGeneration()
@@ -589,15 +638,17 @@ namespace RogueProject
             for (int y = 0; y <= MAP_HT; y++)
             {
                 for (int x = 0; x <= MAP_WD; x++)
-                    if (levelMap[x, y].Visible)
-                    {
-                        if (levelMap[x, y].DisplayCharacter != null)
-                            sbReturn.Append(levelMap[x, y].DisplayCharacter);
-                        else if (levelMap[x, y].ItemCharacter != null)
-                            sbReturn.Append(levelMap[x, y].ItemCharacter);
-                        else
-                            sbReturn.Append(levelMap[x, y].MapCharacter);
+                {
+                    if (levelMap[x, y].Visible == false) {
+                        sbReturn.Append(levelMap[x, y].InvisibleCharacter);
                     }
+                    else if (levelMap[x, y].DisplayCharacter != null)
+                        sbReturn.Append(levelMap[x, y].DisplayCharacter);
+                    else if (levelMap[x, y].ItemCharacter != null)
+                        sbReturn.Append(levelMap[x, y].ItemCharacter);
+                    else
+                        sbReturn.Append(levelMap[x, y].MapCharacter);
+                }
 
                 sbReturn.Append("\n");
             }
@@ -625,6 +676,7 @@ namespace RogueProject
             public char? DisplayCharacter { get; set; } = null;
             public bool SearchRequired { get; set; }    // Certain items like trap doors and exists need a 
             public bool Visible { get; set; } = true;
+            public char InvisibleCharacter { get; set; } = EMPTY;
             public int X { get; set; }                  // special key before they can be seen
             public int Y { get; set; }
             public int Region { get; set; } = 0;

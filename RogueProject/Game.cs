@@ -41,6 +41,7 @@ namespace RogueProject
             this.CurrentMap = new MapLevel();
             this.CurrentPlayer = new Player(playerName);
             this.CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(Player.CHARACTER, true);
+            InitialTorch();
             this.CurrentTurn = 0;
             this.StatusMessage = $"Welcome to the Dungeon, {this.CurrentPlayer.PlayerName} ...";
             this.Stats = $"Level: {CurrentLevel}   Gold: {CurrentPlayer.Gold}";
@@ -104,11 +105,11 @@ namespace RogueProject
 
             if (allowPass)
             {
-                CurrentMap.levelMap[CurrentPlayer.Location.X, CurrentPlayer.Location.Y].DisplayCharacter = null;
+                CurrentMap.levelMap[CurrentPlayer.Location!.X, CurrentPlayer.Location.Y].DisplayCharacter = null;
 
                 if (change == 1)
                 {
-                    CurrentMap.levelMap[CurrentPlayer.Location.X, CurrentPlayer.Location.Y].DisplayCharacter = null;
+                    CurrentMap.levelMap[CurrentPlayer.Location.X!, CurrentPlayer.Location.Y].DisplayCharacter = null;
 
                     if (!VisitedLevels.Contains(CurrentMap)) {
                         VisitedLevels.Add(CurrentMap);
@@ -167,6 +168,46 @@ namespace RogueProject
             return message;
         }
 
+        private void InitialTorch() {
+            // Consider refactoring
+            List<MapSpace> spacesSurroundingPlayer = CurrentMap.SpacesSurroundingPlayer(CurrentMap.PlayersLocation());
+
+            foreach (MapSpace space in CurrentMap.levelMap)
+            {
+                if (spacesSurroundingPlayer.Contains(space))
+                {
+                    space.Visible = true;
+                }
+            }
+        }
+
+        private void Torch() {
+            // Making x number of squares in various directions visible once the player is nearby
+            foreach (KeyValuePair<string, int[]> direction in CurrentMap.directions) {
+                if (direction.Key == "North" || direction.Key == "South")
+                {
+                    for (int i = 1; i < 2; i++)
+                    {
+                        CurrentMap.levelMap[CurrentPlayer.Location!.X + direction.Value[0] * i, CurrentPlayer.Location.Y + direction.Value[1] * i].Visible = true;
+                    }
+                }
+                else if ((direction.Key.Contains("North") || direction.Key.Contains("South")) && (direction.Key != "North" && direction.Key != "South")) {
+                    for (int i = 1; i < 3; i++)
+                    {
+                        CurrentMap.levelMap[CurrentPlayer.Location!.X + direction.Value[0] * i, CurrentPlayer.Location.Y + direction.Value[1] * i].Visible = true;
+                    }
+                }
+                else
+                {
+                    for (int i = 1; i < 5; i++)
+                    {
+                        CurrentMap.levelMap[CurrentPlayer.Location!.X + direction.Value[0] * i, CurrentPlayer.Location.Y + direction.Value[1] * i].Visible = true;
+                    }
+                }
+
+            }
+        }
+
         public void MoveCharacter(Player player, int keyInput)
         {
             int desiredX = player.Location.X;
@@ -208,6 +249,9 @@ namespace RogueProject
                     this.StatusMessage = AddInventory();
                 }
             }
+
+            // Make squares within a region of the player visible, and others not
+            Torch();
         }
     }
 }

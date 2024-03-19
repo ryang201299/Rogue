@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("RogueProject")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+e65ab0bad6b3debb4c2373ca6ed65b0c6a4a6ece")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+a4f212430bcb8bd634debb4caa5d2d10cf21c368")]
 [assembly: System.Reflection.AssemblyProductAttribute("RogueProject")]
 [assembly: System.Reflection.AssemblyTitleAttribute("RogueProject")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
