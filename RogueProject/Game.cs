@@ -1,13 +1,4 @@
-﻿using RogueProject;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
-using static RogueProject.MapLevel;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
+﻿using static RogueProject.MapLevel;
 
 namespace RogueProject
 {
@@ -58,13 +49,13 @@ namespace RogueProject
                 switch (keyVal)
                 {
                     case KEY_DOWNLEVEL:
-                        if (CurrentPlayer.Location.MapCharacter == MapLevel.STAIRWAY)
+                        if (CurrentPlayer.Location!.MapCharacter == MapLevel.STAIRWAY)
                             ChangeLevel(1);
                         else
                             this.StatusMessage = "There's no stairway here.";
                         break;
                     case KEY_UPLEVEL:
-                        if (CurrentPlayer.Location.MapCharacter == MapLevel.STAIRWAY)
+                        if (CurrentPlayer.Location!.MapCharacter == MapLevel.STAIRWAY)
                             ChangeLevel(-1);
                         else
                             this.StatusMessage = "There's no stairway here.";
@@ -160,7 +151,7 @@ namespace RogueProject
         private string AddInventory() {
             string message = "";
 
-            if (CurrentPlayer.Location.ItemCharacter == MapLevel.AMULET) {
+            if (CurrentPlayer.Location!.ItemCharacter == MapLevel.AMULET) {
                 CurrentPlayer.HasAmulet = true;
                 message = "You have found the Amulet of Yendor! Time to escape!";
             }
@@ -210,8 +201,8 @@ namespace RogueProject
 
         public void MoveCharacter(Player player, int keyInput)
         {
-            int desiredX = player.Location.X;
-            int desiredY = player.Location.Y;
+            int desiredX = player.Location!.X;
+            int desiredY = player.Location!.Y;
 
             switch (keyInput) {
                 case KEY_NORTH:

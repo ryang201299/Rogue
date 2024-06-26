@@ -13,11 +13,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\ryang\\Documents\\Coding\\Projects\\Rogue\\Rogue\\RogueProject\\RogueProject.csproj",
+      "projectUniqueName": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\Rogue\\RogueProject\\RogueProject.csproj",
       "projectName": "RogueProject",
-      "projectPath": "C:\\Users\\ryang\\Documents\\Coding\\Projects\\Rogue\\Rogue\\RogueProject\\RogueProject.csproj",
+      "projectPath": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\Rogue\\RogueProject\\RogueProject.csproj",
       "packagesPath": "C:\\Users\\ryang\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\ryang\\Documents\\Coding\\Projects\\Rogue\\Rogue\\RogueProject\\obj\\",
+      "outputPath": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\Rogue\\RogueProject\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\ryang\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -69,7 +69,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.202/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.206/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

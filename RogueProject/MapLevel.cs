@@ -1,13 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Policy;
+﻿using System.Diagnostics;
 using System.Text;
-using System.Threading.Tasks;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Rebar;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Tab;
 
 namespace RogueProject
 {
@@ -69,7 +61,7 @@ namespace RogueProject
             { "SouthEast", new int[] {  1, +1 } }
         };
 
-        List<MapSpace> spacesSurroundingPlayer;
+        List<MapSpace>? spacesSurroundingPlayer;
 
         // Dictionary to hold hallway endings during map generation
         // Previously was MapSpace and Direction, but I care more about region than direction
@@ -323,10 +315,10 @@ namespace RogueProject
             levelMap[x, y] = new MapSpace(STAIRWAY, x, y);
         }
 
-        private Tuple<MapSpace, MapSpace> ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
+        private Tuple<MapSpace, MapSpace>? ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
             {
-            MapSpace closestDoorwayInCurrentRegion = null;
-            MapSpace closestDoorwayInOtherRegion = null;
+            MapSpace? closestDoorwayInCurrentRegion = null;
+            MapSpace? closestDoorwayInOtherRegion = null;
             int shortestDistance = int.MaxValue;
 
             int verticalWeight = 2;
@@ -388,7 +380,7 @@ namespace RogueProject
 
                     int f = g + h;
 
-                    MapSpace existingNode = openSet.Find(n => n.X == possibleSuccessor.X && n.Y == possibleSuccessor.Y);
+                    MapSpace? existingNode = openSet.Find(n => n.X == possibleSuccessor.X && n.Y == possibleSuccessor.Y);
                     if (existingNode == null || (existingNode.FCost.HasValue && f < existingNode.FCost.Value))
                     {
                         possibleSuccessor.GCost = g;
@@ -425,8 +417,8 @@ namespace RogueProject
                 {
                     while (currentNode != startingPosition)
                     {
-                        path.Insert(0, currentNode);
-                        currentNode = currentNode.Parent;
+                        path.Insert(0, currentNode!);
+                        currentNode = currentNode.Parent!;
                     }
                     path.Insert(0, startingPosition);
                     return path;
@@ -458,11 +450,11 @@ namespace RogueProject
             for (int region = 1; region <= 9; region++)
             {
                 // Get the list of doorways for the current region
-                if (doorwaysWithoutCorridors.TryGetValue(region, out List<MapSpace> regionDoorways))
+                if (doorwaysWithoutCorridors.TryGetValue(region, out List<MapSpace>? regionDoorways))
                 {
                     while (regionDoorways.Count > 0)
                     {
-                        Tuple<MapSpace, MapSpace> closestDoorAndTargetDoor = ClosestDoorway(regionDoorways, doorwaysWithoutCorridors);
+                        Tuple<MapSpace, MapSpace>? closestDoorAndTargetDoor = ClosestDoorway(regionDoorways, doorwaysWithoutCorridors);
 
                         // Check if a door could be found, create deadend otherwise
                         if (closestDoorAndTargetDoor == null || closestDoorAndTargetDoor.Item1 == null || closestDoorAndTargetDoor.Item2 == null)
@@ -496,7 +488,7 @@ namespace RogueProject
             }
         }
 
-        public MapSpace GetStartingSpace()
+        public MapSpace? GetStartingSpace()
         {
             foreach (MapSpace space in levelMap)
             {
@@ -552,7 +544,7 @@ namespace RogueProject
             }
 
             // Get the starting cell coordinates
-            MapSpace startingSpace = GetStartingSpace();
+            MapSpace? startingSpace = GetStartingSpace();
 
             if (startingSpace == null) {
                 throw new Exception("No starting point found");
@@ -619,7 +611,7 @@ namespace RogueProject
         }
 
         public void MoveDisplayItem(Player player, MapSpace newLocation) {
-            newLocation.DisplayCharacter = player.Location.DisplayCharacter;
+            newLocation.DisplayCharacter = player.Location!.DisplayCharacter;
 
             player.Location.DisplayCharacter = null;
 
