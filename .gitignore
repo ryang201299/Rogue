@@ -1,0 +1,21 @@
+# # Ignore object files
+# *.o
+# *.obj
+
+# # Ignore assembly files
+# *.s
+# *.asm
+
+# # Ignore other build artifacts
+# *.exe
+# *.dll
+# *.so
+# *.out
+# *.a
+# *.lib
+
+# Ignore build directories (example for CMake)
+RogueProject/bin/
+RogueProject/obj/
+bin/
+obj/
