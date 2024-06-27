@@ -1,0 +1,28 @@
+Create region, and room classes
+
+Change MapLevel constructor to instead of just assigning characters to
+a region, track what region it is in, and create a new object and 
+populate that objects squares instead
+
+Change torch function to instead on each character move make all squares
+in players range visible, have a trigger on the mapspace class that has a
+a flag "player entered room" or something, and if that flag is true, the torch
+method is called for that entire room.
+
+Research c# events and subscribers to track when a user enters a room 
+i.e. steps on a doorway/steps on an interior floor that isn't visible.
+
+Also refactor the astar method to use a GetSpace method, that accesses
+the mapspace details for the given coords, since the region object
+won't have those details.
+
+In terms of tracking the layout of the level, since I won't be using
+levelMap anymore, the something list containing the levels would now
+need to contain a list of level objects, which contains a list of region
+objects, which contains a room object.
+
+The spaces surrounding player code can be completely removed following 
+this too.
+
+The initial torch method would now need to make the entire first region
+visible instead of the spaces around the player.
