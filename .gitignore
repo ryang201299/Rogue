@@ -15,5 +15,5 @@
 # *.lib
 
 # Ignore build directories (example for CMake)
-bin/
-obj/
+RogueProject/bin/
+RogueProject/obj/
