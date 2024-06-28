@@ -1,6 +1,4 @@
-﻿using static RogueProject.MapLevel;
-
-namespace RogueProject
+﻿namespace RogueProject
 {
     internal class Game
     {
