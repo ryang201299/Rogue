@@ -2,16 +2,6 @@
 {
     internal class Game
     {
-        // Directional inputs
-        private const int KEY_WEST = 37;                
-        private const int KEY_NORTH = 38;
-        private const int KEY_EAST = 39;
-        private const int KEY_SOUTH = 40;
-
-        private const int KEY_UPLEVEL = 188;
-        private const int KEY_DOWNLEVEL = 190;
-        private const int MAX_LEVEL = 2;
-
         public MapLevel CurrentMap { get; set; }
         public int CurrentLevel { get; set; }
         public List<MapLevel> VisitedLevels { get; set; }

@@ -3,35 +3,8 @@ using System.Text;
 
 namespace RogueProject;
 public class MapLevel {
-    // Regional boundaries for room generation in order of north_y, east_x, south_y, and west_x
-    private Dictionary<int, List<int>> regionBoundaries = new Dictionary<int, List<int>>
-    {
-        { 1, new List<int> { 1, 24, 6, 1 }},
-        { 2, new List<int> { 1, 50, 6, 27}},
-        { 3, new List<int> { 1, 76, 6, 53 }},
-        { 4, new List<int> { 9, 24, 14, 1 }},
-        { 5, new List<int> { 9, 50, 14, 27 }},
-        { 6, new List<int> { 9, 76, 14, 53 }},
-        { 7, new List<int> { 17, 24, 22, 1 }},
-        { 8, new List<int> { 17, 50, 22, 27 }},
-        { 9, new List<int> { 17, 76, 22, 53 }},
-    };
-
-    public Dictionary<string, int[]> directions = new Dictionary<string, int[]> {
-        { "East",      new int[] {  1,  0 } },
-        { "West",      new int[] { -1,  0 } },
-        { "North",     new int[] {  0, -1 } },
-        { "South",     new int[] {  0, +1 } },
-        { "NorthEast", new int[] {  1, -1 } },
-        { "NorthWest", new int[] { -1, -1 } },
-        { "SouthWest", new int[] { -1, +1 } },
-        { "SouthEast", new int[] {  1, +1 } }
-    };
-
     List<MapSpace>? spacesSurroundingPlayer;
 
-    // Dictionary to hold hallway endings during map generation
-    // Previously was MapSpace and Direction, but I care more about region than direction
     private Dictionary<int, List<MapSpace>> allDoorways;
     public MapSpace[,] levelMap;
 
