@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Game.cs",
+              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Game.cs",
+              "RelativeDocumentMoniker": "Game.cs",
+              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Game.cs",
+              "RelativeToolTip": "Game.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAIAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-01-02T19:26:57.907Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

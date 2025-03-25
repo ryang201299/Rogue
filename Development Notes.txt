@@ -26,3 +26,8 @@ this too.
 
 The initial torch method would now need to make the entire first region
 visible instead of the spaces around the player.
+
+-- latest note
+Still trying to read the code to understand where it was left off. But the idea of a region class might actually be possible?
+Since atm I use map level, which stores all map spaces, regardless of region, but I also use regions elsewhere, it suggests i could easily
+also use region objectts. The difficult decision is whether I gain anything from this.
