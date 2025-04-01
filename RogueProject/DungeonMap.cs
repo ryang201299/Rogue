@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using RogueProject.Models.Enums;
 
 namespace RogueProject
 {
@@ -42,6 +43,7 @@ namespace RogueProject
             Debug.WriteLine("Key Up - " + e.KeyValue);
         }
 
+        // Means pressing any key down - does not mean pressing the down arrow key 
         private void DungeonMain_KeyDown(object sender, KeyEventArgs e)
         {
             Debug.WriteLine("Key Down - " + e.KeyValue);

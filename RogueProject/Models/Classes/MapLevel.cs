@@ -1,18 +1,36 @@
 ﻿using System.Diagnostics;
 using System.Text;
+using Rogueproject;
+using RogueProject.Models;
 
 namespace RogueProject;
 public class MapLevel {
-    List<MapSpace>? spacesSurroundingPlayer;
+    // Map measurements
+    private const short _REGION_WIDTH = 26;
+    private const short _REGION_HEIGHT = 8;
+    private const short _MAP_WIDTH = 78;
+    private const short _MAP_HEIGHT = 24;
+    private const short _MAX_ROOM_WIDTH = 22;
+    private const short _MAX_ROOM_HEIGHT = 5;
+    private const short _MIN_ROOM_WIDTH = 4;
+    private const short _MIN_ROOM_HEIGHT = 4;
 
-    private Dictionary<int, List<MapSpace>> allDoorways;
+    private readonly List<MapSpace>? _spacesSurroundingPlayer;
+
+    private readonly Dictionary<int, List<MapSpace>> _allDoorways;
     public MapSpace[,] levelMap;
+
+    public List<MapRegion> MapRegions { get; set; }
+
+    private Random RandomObject { get; set; }
 
     public MapLevel() {
         do
         {
             this.levelMap = new MapSpace[80, 25];
-            this.allDoorways = new Dictionary<int, List<MapSpace>>()
+
+            // Can probably change to region objects instead of ints
+            this._allDoorways = new Dictionary<int, List<MapSpace>>()
             {
                 { 1, new List<MapSpace>() },
                 { 2, new List<MapSpace>() },
@@ -24,6 +42,8 @@ public class MapLevel {
                 { 8, new List<MapSpace>() },
                 { 9, new List<MapSpace>() }
             };
+
+            RandomObject = new Random();
 
             MapGeneration();
             /*Debug.WriteLine(MapText());*/
@@ -62,7 +82,7 @@ public class MapLevel {
             levelMap[playerLocation.X - 1, playerLocation.Y - 1],
 
             levelMap[playerLocation.X + 1, playerLocation.Y + 1],
-            levelMap[playerLocation.X - 1, playerLocation.Y + 1],
+            levelMap[playerLocation.X - 1, playerLocation.Y + 1]
         ];
 
         return surroundingSpaces;
@@ -70,40 +90,45 @@ public class MapLevel {
 
     private void MapGeneration()
     {
-        var rand = new Random();
-        int roomWidth = 0;
-        int roomHeight = 0;
-        int roomAnchorX = 0;
-        int roomAnchorY = 0;
-        int region = 1;
+        byte region = 1;
 
         levelMap = new MapSpace[80, 25];
 
-        for (int y = 1; y < 18; y += REGION_HT) {
-            for (int x = 1; x < 54; x += REGION_WD) {
-                if (rand.Next(1, 101) <= ROOM_CREATE_PCT) {
+        // Change this to create regions and rooms within each region
+        for (int y = 1; y < 18; y += _REGION_HEIGHT) {
+            for (int x = 1; x < 54; x += _REGION_WIDTH) {
+                MapRegion mapRegion = new MapRegion(region);
+                MapRegions.Add(mapRegion);
+
+                // Random chance of a room being created in this region
+                if (RandomObject.Next(1, 101) <= CommonData.Probabilities["RoomCreation"]) {
                     // Room size
-                    roomHeight = rand.Next(MIN_ROOM_HT, MAX_ROOM_HT + 1);
-                    roomWidth = rand.Next(MIN_ROOM_WT, MAX_ROOM_WT + 1);
+                    int roomHeight = RandomObject.Next(_MIN_ROOM_HEIGHT, _MAX_ROOM_HEIGHT + 1);
+                    int roomWidth = RandomObject.Next(_MIN_ROOM_WIDTH, _MAX_ROOM_WIDTH + 1);
 
                     // Center room in region
-                    roomAnchorY = (int)((REGION_HT - roomHeight) / 2) + y;
-                    roomAnchorX = (int)((REGION_WD - roomWidth) / 2) + x;
+                    int southWallYAxis = (int)((_REGION_HEIGHT - roomHeight) / 2) + y;
+                    int westWallXAxis = (int)((_REGION_WIDTH - roomWidth) / 2) + x;
 
-                    // Create room
-                    RoomGeneration(roomAnchorX, roomAnchorY, roomWidth, roomHeight, region);
+                    int eastWallXAxis = westWallXAxis + roomWidth;
+                    int northWallYAxis = southWallYAxis + roomHeight;
+
+                    MapRoom mapRoom = new MapRoom(northWallYAxis, southWallYAxis, westWallXAxis, eastWallXAxis, mapRegion.RegionNumber, levelMap, _allDoorways);
+
+                    mapRegion.Room = mapRoom;
                 }
 
                 region++;
             }
         }
 
+        // No idea what this is doing
         for (int y = 0; y <= levelMap.GetUpperBound(1); y++)
         {
             for (int x = 0; x <= levelMap.GetUpperBound(0); x++)
             {
                 if (levelMap[x, y] is null)
-                    levelMap[x, y] = new MapSpace(EMPTY, false, x, y);
+                    levelMap[x, y] = new MapSpace(CommonData.MapCharacters["Empty"], false, x, y, GetRegionNumber(x, y));
             }
         }
 
@@ -112,147 +137,23 @@ public class MapLevel {
         AddStairway();
     }
 
-    private void RoomGeneration(int westWallX, int northWallY, int roomWidth, int roomHeight, int region) {
-        int eastWallX = westWallX + roomWidth;
-        int southWallY = northWallY + roomHeight;
-
-        // If room dimensions exceed region boundaries, set said dimenion back to the boundary limit
-        if (northWallY < regionBoundaries[region][0]) {
-            northWallY = regionBoundaries[region][0];
-        }
-
-        if (eastWallX > regionBoundaries[region][1]) {
-            eastWallX = regionBoundaries[region][1];
-        }
-
-        if (southWallY > regionBoundaries[region][2]) {
-            southWallY = regionBoundaries[region][2];
-        }
-
-        if (westWallX < regionBoundaries[region][3]) {
-            westWallX = regionBoundaries[region][3];
-        }
-
-        int regionNumber = GetRegionNumber(westWallX, northWallY);
-        int doorway = 0;
-        int doorCount = 0;
-        var rand = new Random();
-
-        // Create horizontal and vertical walls for a room. Not including corners or exits
-        for (int y = northWallY; y <= southWallY; y++) {
-            for (int x = westWallX; x <= eastWallX; x++) {
-                if (y == northWallY || y == southWallY)
-                {
-                    levelMap[x, y] = new MapSpace(HORIZONTAL, false, x, y);
-                }
-                else if (x == westWallX || x == eastWallX)
-                {
-                    levelMap[x, y] = new MapSpace(VERTICAL, false, x, y);
-                }
-                else if (levelMap[x, y] == null) {
-                    levelMap[x, y] = new MapSpace(ROOM_INT, false, x, y);
-                }
-            }
-        }
-
-        while (doorCount == 0) {
-            // North doorways
-            if (regionNumber >= 4 && rand.Next(101) <= ROOM_EXIT_PCT) {
-                // calculate random wall along the north wall. Add 1 to the start, and subtract 1
-                // from the end to avoid corners
-                doorway = rand.Next(westWallX + 1, eastWallX);
-
-                // create new door space
-                levelMap[doorway, northWallY] = new MapSpace(ROOM_DOOR, false, doorway, northWallY);
-
-                // create new hallway space one square further away in same direction
-                levelMap[doorway, northWallY - 1] = new MapSpace(EMPTY, false, doorway, northWallY - 1);
-
-                // add to deadends dictionary
-                allDoorways[regionNumber].Add(levelMap[doorway, northWallY - 1]);
-
-                // Increment door count
-                doorCount += 1;
-            }
-
-            // South doorways
-            if (regionNumber <= 6 && rand.Next(101) <= ROOM_EXIT_PCT) {
-                doorway = rand.Next(westWallX + 1, eastWallX);
-
-                levelMap[doorway, southWallY] = new MapSpace(ROOM_DOOR, false, doorway, southWallY);
-
-                levelMap[doorway, southWallY + 1] = new MapSpace(EMPTY, false, doorway, southWallY + 1);
-
-                allDoorways[regionNumber].Add(levelMap[doorway, southWallY + 1]);
-
-                doorCount += 1;
-            }
-
-            // East doorways
-            if ("147258".Contains(regionNumber.ToString()) && rand.Next(101) <= ROOM_EXIT_PCT) {
-                doorway = rand.Next(northWallY + 1, southWallY);
-
-                levelMap[eastWallX, doorway] = new MapSpace(ROOM_DOOR, false, eastWallX, doorway);
-
-                levelMap[eastWallX + 1, doorway] = new MapSpace(EMPTY, false, eastWallX + 1, doorway);
-
-                allDoorways[regionNumber].Add(levelMap[eastWallX + 1, doorway]);
-
-                doorCount += 1;
-            }
-
-            // West doorways
-            if ("258369".Contains(regionNumber.ToString()) && rand.Next(101) <= ROOM_EXIT_PCT) {
-                doorway = rand.Next(northWallY + 1, southWallY);
-
-                levelMap[westWallX, doorway] = new MapSpace(ROOM_DOOR, false, westWallX, doorway);
-
-                levelMap[westWallX - 1, doorway] = new MapSpace(EMPTY, false, westWallX - 1, doorway);
-
-                allDoorways[regionNumber].Add(levelMap[westWallX - 1, doorway]);
-
-                doorCount += 1;
-            }
-        }
-
-        // Lastly, the corners are filled in
-        levelMap[westWallX, northWallY] = new MapSpace(CORNER_NW, false, westWallX, northWallY);
-        levelMap[eastWallX, northWallY] = new MapSpace(CORNER_NE, false, eastWallX, northWallY);
-        levelMap[westWallX, southWallY] = new MapSpace(CORNER_SW, false, westWallX, southWallY);
-        levelMap[eastWallX, southWallY] = new MapSpace(CORNER_SE, false, eastWallX, southWallY);
-
-        // Evaluate for a gold stash
-        int goldX = westWallX; 
-        int goldY = northWallY;
-
-        if (rand.Next(1, 101) > ROOM_GOLD_PCT)
-        {
-            // Search the room randomly for an empty interior room space
-            // and mark it as a gold stash.
-            while (levelMap[goldX, goldY].MapCharacter != ROOM_INT)
-            {
-                goldX = rand.Next(westWallX + 1, eastWallX);
-                goldY = rand.Next(northWallY + 1, southWallY);
-            }
-
-            levelMap[goldX, goldY].ItemCharacter = GOLD;
-        }
-    }
-
     private void AddStairway()
     {
-        var rand = new Random();
         int x = 1; int y = 1;
 
         // Search the array randomly for an interior room space
         // and mark it as a hallway.
-        while (levelMap[x, y].MapCharacter != ROOM_INT)
+        while (levelMap[x, y].MapCharacter != CommonData.MapCharacters["RoomFloor"])
         {
-            x = rand.Next(1, MAP_WD);
-            y = rand.Next(1, MAP_HT);
+            x = RandomObject.Next(1, _MAP_WIDTH);
+            y = RandomObject.Next(1, _MAP_HEIGHT);
+        }
+        {
+            x = RandomObject.Next(1, _MAP_WIDTH);
+            y = RandomObject.Next(1, _MAP_HEIGHT);
         }
 
-        levelMap[x, y] = new MapSpace(STAIRWAY, x, y);
+        levelMap[x, y] = new MapSpace(CommonData.MapCharacters["Stairway"], x, y, GetRegionNumber(x, y));
     }
 
     private Tuple<MapSpace, MapSpace>? ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
@@ -300,16 +201,16 @@ public class MapLevel {
         int newX = currentPosition.X + xDifference;
         int newY = currentPosition.Y + yDifference;
 
-        if (newX > 0 && newX < MAP_WD && newY > 0 && newY < MAP_HT)
+        if (newX > 0 && newX < _MAP_WIDTH && newY > 0 && newY < _MAP_HEIGHT)
         {
-            MapSpace possibleSuccessor = new MapSpace(levelMap[newX, newY].MapCharacter, newX, newY);
+            MapSpace possibleSuccessor = new MapSpace(levelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
 
             if ((!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y))
-                && possibleSuccessor.MapCharacter == EMPTY
-                && levelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != HALLWAY
-                && levelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != HALLWAY
-                && levelMap[possibleSuccessor.X, possibleSuccessor.Y - 1].MapCharacter != HALLWAY
-                && levelMap[possibleSuccessor.X - 1, possibleSuccessor.Y].MapCharacter != HALLWAY)
+                && possibleSuccessor.MapCharacter == CommonData.MapCharacters["Empty"]
+                && levelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != CommonData.MapCharacters["Hallway"]
+                && levelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"]
+                && levelMap[possibleSuccessor.X, possibleSuccessor.Y - 1].MapCharacter != CommonData.MapCharacters["Hallway"]
+                && levelMap[possibleSuccessor.X - 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"])
             {
                 int verticalWeight = 3;
 
@@ -382,7 +283,7 @@ public class MapLevel {
     {
         Dictionary<int, List<MapSpace>> doorwaysWithoutCorridors = new Dictionary<int, List<MapSpace>>();
 
-        foreach (var entry in allDoorways)
+        foreach (var entry in _allDoorways)
         {
             doorwaysWithoutCorridors.Add(entry.Key, new List<MapSpace>(entry.Value));
         }
@@ -414,7 +315,7 @@ public class MapLevel {
 
                     foreach (MapSpace space in path)
                     {
-                        space.MapCharacter = HALLWAY;
+                        space.MapCharacter = CommonData.MapCharacters["Hallway"];
 
                         levelMap[space.X, space.Y] = space;
                     }
@@ -432,7 +333,7 @@ public class MapLevel {
     {
         foreach (MapSpace space in levelMap)
         {
-            if (space.MapCharacter == ROOM_INT)
+            if (space.MapCharacter == CommonData.MapCharacters["RoomFloor"])
             {
                 return space;
             }
@@ -442,7 +343,9 @@ public class MapLevel {
     }
 
     public bool IsValidSpace(MapSpace space) {
-        return space.MapCharacter == ROOM_INT || space.MapCharacter == HALLWAY || space.MapCharacter == ROOM_DOOR;
+        return space.MapCharacter == CommonData.MapCharacters["RoomFloor"] 
+            || space.MapCharacter == CommonData.MapCharacters["Hallway"] 
+            || space.MapCharacter == CommonData.MapCharacters["RoomDoor"];
     }
 
     public List<MapSpace> GetValidNeighbours(MapSpace space) {
@@ -475,7 +378,7 @@ public class MapLevel {
     {
         List<int> regionsWithRooms = new List<int>();
 
-        foreach (KeyValuePair<int, List<MapSpace>> region in allDoorways)
+        foreach (KeyValuePair<int, List<MapSpace>> region in _allDoorways)
         {
             if (region.Value.Count > 0)
             {
@@ -526,16 +429,15 @@ public class MapLevel {
         // Find a random space within one of the rooms that 
         // hasn't been occupied and return the array reference.
 
-        Random rand = new Random();
         int xPos = 1, yPos = 1;
         bool freeSpace = false;
 
         while (!freeSpace)
         {
-            xPos = rand.Next(1, MAP_WD);
-            yPos = rand.Next(1, MAP_HT);
+            xPos = RandomObject.Next(1, _MAP_WIDTH);
+            yPos = RandomObject.Next(1, _MAP_HEIGHT);
 
-            freeSpace = (levelMap[xPos, yPos].MapCharacter == ROOM_INT)
+            freeSpace = (levelMap[xPos, yPos].MapCharacter == CommonData.MapCharacters["RoomFloor"])
                 && levelMap[xPos, yPos].DisplayCharacter == null
                 && levelMap[xPos, yPos].ItemCharacter == null;
         }
@@ -567,9 +469,9 @@ public class MapLevel {
         // Output the array to text for display.
         StringBuilder sbReturn = new StringBuilder();
 
-        for (int y = 0; y <= MAP_HT; y++)
+        for (int y = 0; y <= _MAP_HEIGHT; y++)
         {
-            for (int x = 0; x <= MAP_WD; x++)
+            for (int x = 0; x <= _MAP_WIDTH; x++)
             {
                 if (levelMap[x, y].Visible == false) {
                     sbReturn.Append(levelMap[x, y].InvisibleCharacter);
@@ -594,8 +496,8 @@ public class MapLevel {
 
         int returnVal;
 
-        int regionX = ((int)RoomAnchorX / REGION_WD) + 1;
-        int regionY = ((int)RoomAnchorY / REGION_HT) + 1;
+        int regionX = ((int)RoomAnchorX / _REGION_WIDTH) + 1;
+        int regionY = ((int)RoomAnchorY / _REGION_HEIGHT) + 1;
 
         returnVal = (regionX) + ((regionY - 1) * 3);
 

@@ -1,12 +1,18 @@
+
+
+using Rogueproject;
+using RogueProject.Models;
+
 namespace RogueProject;
 
 public class MapSpace {
+    public MapRoom MapRoom { get; set; }
     public char MapCharacter { get; set; }
     public char? ItemCharacter { get; set; } = null;
     public char? DisplayCharacter { get; set; } = null;
     public bool SearchRequired { get; set; }    // Certain items like trap doors and exists need a 
     public bool Visible { get; set; } = true;
-    public char InvisibleCharacter { get; set; } = EMPTY;
+    public char InvisibleCharacter { get; set; } = CommonData.MapCharacters["Empty"];
     public int X { get; set; }                  // special key before they can be seen
     public int Y { get; set; }
     public int Region { get; set; } = 0;
@@ -23,13 +29,13 @@ public class MapSpace {
         Y = 0;
     }
 
-    public MapSpace(char mapChar, int X, int Y) {
+    public MapSpace(char mapChar, int X, int Y, int regionNumber) {
         // Create a non-blank space
         this.MapCharacter = mapChar;
         this.SearchRequired = false;
         this.X = X;
         this.Y = Y;
-        this.Region = GetRegionNumber(X, Y);
+        this.Region = regionNumber;
     }
 
     public MapSpace(char mapChar, MapSpace oldSpace) {
@@ -41,12 +47,12 @@ public class MapSpace {
         this.Region = oldSpace.Region;
     }
 
-    public MapSpace(char mapChar, bool search, int X, int Y) {
+    public MapSpace(char mapChar, bool search, int X, int Y, int regionNumber) {
         // Allows for setting objects to be displayed or hidden
         this.MapCharacter = mapChar;
         this.SearchRequired = search;
         this.X = X;
         this.Y = Y;
-        this.Region = GetRegionNumber(X, Y);
+        this.Region = regionNumber;
     }
 }

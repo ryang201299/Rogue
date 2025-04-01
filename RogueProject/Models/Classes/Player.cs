@@ -2,7 +2,7 @@
 
 namespace RogueProject
 {
-    internal class Player
+    public class Player
     {
         private const int STARTING_HP = 12;
         private const int STARTING_STRENGTH = 16;
