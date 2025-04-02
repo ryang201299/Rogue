@@ -15,10 +15,8 @@ public class MapLevel {
     private const short _MIN_ROOM_WIDTH = 4;
     private const short _MIN_ROOM_HEIGHT = 4;
 
-    private readonly List<MapSpace>? _spacesSurroundingPlayer;
-
     private readonly Dictionary<int, List<MapSpace>> _allDoorways;
-    public MapSpace[,] levelMap;
+    public MapSpace[,] levelMap { get; set; }
 
     public List<MapRegion> MapRegions { get; set; }
 
@@ -28,6 +26,8 @@ public class MapLevel {
         do
         {
             this.levelMap = new MapSpace[80, 25];
+
+            this.MapRegions = new List<MapRegion>();
 
             // Can probably change to region objects instead of ints
             this._allDoorways = new Dictionary<int, List<MapSpace>>()
@@ -122,7 +122,7 @@ public class MapLevel {
             }
         }
 
-        // No idea what this is doing
+        // For every pair of coordinates, if the space is not instantiated, instantiate it as empty
         for (int y = 0; y <= levelMap.GetUpperBound(1); y++)
         {
             for (int x = 0; x <= levelMap.GetUpperBound(0); x++)

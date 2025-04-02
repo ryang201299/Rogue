@@ -18,9 +18,11 @@ public class MapRoom {
     public int WestWallXAxis { get; set; }
     public int EastWallXAxis { get; set; }
     public MapSpace[,] LevelMap { get; set; }
-    public Dictionary<int, List<MapSpace>> AllDoorways { get; set; }
+    public Dictionary<int, List<MapSpace>> AllDoorways { get; set; } 
 
     public MapRoom(int northWallYAxis, int southWallYAxis, int westWallXAxis, int eastWallXAxis, int regionNumber, MapSpace[,] levelMap, Dictionary<int, List<MapSpace>> allDoorways) {
+        AllDoorways = allDoorways;
+        
         RandomObject = new Random();
         
         this.NorthWallYAxis = northWallYAxis;
@@ -58,8 +60,12 @@ public class MapRoom {
         LevelMap[WestWallXAxis, SouthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerNorthWest"], false, WestWallXAxis, SouthWallYAxis, RegionNumber);
         LevelMap[EastWallXAxis, SouthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerNorthEast"], false, EastWallXAxis, SouthWallYAxis, RegionNumber);
         LevelMap[WestWallXAxis, NorthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerSouthWest"], false, WestWallXAxis, NorthWallYAxis, RegionNumber);
-        LevelMap[EastWallXAxis, NorthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerSouthEast"], false, EastWallXAxis, NorthWallYAxis, RegionNumber);
+        LevelMap[EastWallXAxis, NorthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerSouthEast"], false, EastWallXAxis, NorthWallYAxis, RegionNumber); 
 
+        GenerateGold();       
+    }
+
+    public void GenerateGold() {
         // Evaluate for a gold stash
         int goldX = WestWallXAxis; 
         int goldY = SouthWallYAxis;
@@ -68,13 +74,11 @@ public class MapRoom {
         {
             // Search the room randomly for an empty interior room space
             // and mark it as a gold stash.
+
+            // Note for future Ryan - This is failing because levelMap hasn't been instantiated yet in MapLevel.cs
             while (LevelMap[goldX, goldY].MapCharacter != CommonData.MapCharacters["RoomFloor"])
             {
                 goldX = RandomObject.Next(WestWallXAxis + 1, EastWallXAxis);
-                goldY = RandomObject.Next(SouthWallYAxis + 1, NorthWallYAxis);
-            }
-            {
-                goldX = RandomObject.Next(WestWallXAxis + 1, WestWallXAxis);
                 goldY = RandomObject.Next(SouthWallYAxis + 1, NorthWallYAxis);
             }
 
