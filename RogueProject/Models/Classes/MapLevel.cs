@@ -16,6 +16,7 @@ public class MapLevel {
     private const short _MIN_ROOM_HEIGHT = 4;
 
     private readonly Dictionary<int, List<MapSpace>> _allDoorways;
+
     public MapSpace[,] levelMap { get; set; }
 
     public List<MapRegion> MapRegions { get; set; }
@@ -95,8 +96,12 @@ public class MapLevel {
         levelMap = new MapSpace[80, 25];
 
         // Change this to create regions and rooms within each region
-        for (int y = 1; y < 18; y += _REGION_HEIGHT) {
-            for (int x = 1; x < 54; x += _REGION_WIDTH) {
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                // Calculate actual x,y coordinates using region dimensions
+                int x = 1 + (col * _REGION_WIDTH);
+                int y = 1 + (row * _REGION_HEIGHT);
+                
                 MapRegion mapRegion = new MapRegion(region);
                 MapRegions.Add(mapRegion);
 
