@@ -151,10 +151,6 @@ public class MapLevel {
             x = RandomObject.Next(1, _MAP_WIDTH);
             y = RandomObject.Next(1, _MAP_HEIGHT);
         }
-        {
-            x = RandomObject.Next(1, _MAP_WIDTH);
-            y = RandomObject.Next(1, _MAP_HEIGHT);
-        }
 
         levelMap[x, y] = new MapSpace(CommonData.MapCharacters["Stairway"], x, y, GetRegionNumber(x, y));
     }
