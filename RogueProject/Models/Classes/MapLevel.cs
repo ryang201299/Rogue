@@ -93,8 +93,6 @@ public class MapLevel {
     {
         byte region = 1;
 
-        levelMap = new MapSpace[80, 25];
-
         // Change this to create regions and rooms within each region
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
