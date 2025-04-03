@@ -39,7 +39,7 @@ public class MapRoom {
     private void PopulateRoom() {
         // Create horizontal and vertical walls for a room. Not including corners or exits
         for (int y = SouthWallYAxis; y <= NorthWallYAxis; y++) {
-            for (int x = SouthWallYAxis; x <= EastWallXAxis; x++) {
+            for (int x = WestWallXAxis; x <= EastWallXAxis; x++) {
                 if (y == SouthWallYAxis || y == NorthWallYAxis)
                 {
                     LevelMap[x, y] = new MapSpace(CommonData.MapCharacters["Horizontal"], false, x, y, RegionNumber);
