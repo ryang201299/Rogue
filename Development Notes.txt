@@ -1,18 +1,21 @@
--- latest note
-Still trying to read the code to understand where it was left off. But the idea of a region class might actually be possible?
-Since atm I use map level, which stores all map spaces, regardless of region, but I also use regions elsewhere, it suggests i could easily
-also use region objectts. The difficult decision is whether I gain anything from this.
+Light design
+- Real game
+    - Rooms light up in full as though a switch was flicked as soon as you enter them
+    - Random chance a room will not light up. The walls will still light up. Player walks through the room with a "torch". Resembled by the
+      floor spaces being set to empty characters.
+    - Coridors light up gradually like a torch, but do not turn dark once the player has walked through them.
+
+- My game
+    - Same idea with rooms
+    - Not sure what to do about coridors. Could copy the real game, I could make them turn dark as you walk through, like a real torch, 
+      or I could make them switch on like a room, or I could even make some switch on, and some have a torch.
+    - Maybe the long ones are a torch, and the short ones just light up?
+    
+    - With these in mind, I think the torch should do one square distance in all directions
 
 
-Latest idea
-- I think a torch function for coridors might still be cool? But rooms will light up as though by a switch
-- If each mapspace object has a room object associated with it, then its a simple nested if every player movement
-    - does this space belong to a room, yes or no
-        - is this room.lightson, if not, call a function to make all room squares visible
+    - Random cool thought, some levels should be completely dark...no light up rooms, everything is done with a torch
 
-- genius idea for the torch 2d array issue...if it's a 2d array of mapspace objects, then updating that object anywhere would update it everywhere
-    - so I still only need to update the mapspace one time when it changes e.g. becomes visible
-
-
-
-- separate classes for map level model and controller?
+    - Quick though on how to know which squares to make invisible after the torch has walked past them...keep a list of coords that have been
+      lit up, and every time the torch method is called to light up squares, set all squares currently in the list to be invisible, and then 
+      remove them from the list.
