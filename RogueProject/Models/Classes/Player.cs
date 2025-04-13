@@ -9,7 +9,6 @@ namespace RogueProject
         public const int MAX_FOODVALUE = 1700;
         public const int MIN_FOODVALUE = 900;
         private const int HUNGER_TURNS = 150;
-        public const char CHARACTER = '☺';
 
         public enum HungerLevel
         {

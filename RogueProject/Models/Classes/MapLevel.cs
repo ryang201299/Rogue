@@ -17,16 +17,20 @@ public class MapLevel {
 
     private readonly Dictionary<int, List<MapSpace>> _allDoorways;
 
-    public MapSpace[,] levelMap { get; set; }
+    public MapSpace[,] LevelMap { get; set; }
 
     public List<MapRegion> MapRegions { get; set; }
 
     private Random RandomObject { get; set; }
 
-    public MapLevel() {
+    public Game GameInstance { get; set; }
+
+    public MapLevel(Game game) {
+        GameInstance = game;
+
         do
         {
-            this.levelMap = new MapSpace[80, 25];
+            this.LevelMap = new MapSpace[80, 25];
 
             this.MapRegions = new List<MapRegion>();
 
@@ -51,7 +55,7 @@ public class MapLevel {
             /*                Application.DoEvents();
             */
 
-            foreach (MapSpace space in levelMap) {
+            foreach (MapSpace space in LevelMap) {
                 space.Visible = false;
             }
         } while (!MapVerification());
@@ -69,7 +73,7 @@ public class MapLevel {
 
     // refactor this to avoid unnecessary return of new MapSpace()
     public MapSpace PlayersLocation() {
-        foreach (MapSpace space in levelMap) {
+        foreach (MapSpace space in LevelMap) {
             if (space.DisplayCharacter == '☺') {
                 return space;
             }
@@ -81,16 +85,16 @@ public class MapLevel {
     public List<MapSpace> SpacesSurroundingPlayer(MapSpace playerLocation) {
         List<MapSpace> surroundingSpaces =
         [
-            levelMap[playerLocation.X + 1, playerLocation.Y],
-            levelMap[playerLocation.X - 1, playerLocation.Y],
-            levelMap[playerLocation.X, playerLocation.Y + 1],
-            levelMap[playerLocation.X, playerLocation.Y - 1],
+            LevelMap[playerLocation.X + 1, playerLocation.Y],
+            LevelMap[playerLocation.X - 1, playerLocation.Y],
+            LevelMap[playerLocation.X, playerLocation.Y + 1],
+            LevelMap[playerLocation.X, playerLocation.Y - 1],
 
-            levelMap[playerLocation.X + 1, playerLocation.Y - 1],
-            levelMap[playerLocation.X - 1, playerLocation.Y - 1],
+            LevelMap[playerLocation.X + 1, playerLocation.Y - 1],
+            LevelMap[playerLocation.X - 1, playerLocation.Y - 1],
 
-            levelMap[playerLocation.X + 1, playerLocation.Y + 1],
-            levelMap[playerLocation.X - 1, playerLocation.Y + 1]
+            LevelMap[playerLocation.X + 1, playerLocation.Y + 1],
+            LevelMap[playerLocation.X - 1, playerLocation.Y + 1]
         ];
 
         return surroundingSpaces;
@@ -123,7 +127,7 @@ public class MapLevel {
                     int eastWallXAxis = westWallXAxis + roomWidth;
                     int northWallYAxis = southWallYAxis + roomHeight;
 
-                    MapRoom mapRoom = new MapRoom(northWallYAxis, southWallYAxis, westWallXAxis, eastWallXAxis, mapRegion.RegionNumber, levelMap, _allDoorways);
+                    MapRoom mapRoom = new MapRoom(northWallYAxis, southWallYAxis, westWallXAxis, eastWallXAxis, mapRegion.RegionNumber, this, _allDoorways);
 
                     mapRegion.Room = mapRoom;
                 }
@@ -134,12 +138,12 @@ public class MapLevel {
 
         // For every pair of coordinates, if the space is not instantiated, instantiate it as empty
         // GetUpperBound(1) is Y, GetUpperBound(0) is X
-        for (int x = 0; x <= levelMap.GetUpperBound(0); x++)
+        for (int x = 0; x <= LevelMap.GetUpperBound(0); x++)
         {
-            for (int y = 0; y <= levelMap.GetUpperBound(1); y++)
+            for (int y = 0; y <= LevelMap.GetUpperBound(1); y++)
             {
-                if (levelMap[x, y] is null)
-                    levelMap[x, y] = new MapSpace(x, y);
+                if (LevelMap[x, y] is null)
+                    LevelMap[x, y] = new MapSpace(x, y);
             }
         }
 
@@ -154,13 +158,13 @@ public class MapLevel {
 
         // Search the array randomly for an interior room space
         // and mark it as a hallway.
-        while (levelMap[x, y].MapCharacter != CommonData.MapCharacters["RoomFloor"])
+        while (LevelMap[x, y].MapCharacter != CommonData.MapCharacters["RoomFloor"])
         {
             x = RandomObject.Next(1, _MAP_WIDTH);
             y = RandomObject.Next(1, _MAP_HEIGHT);
         }
 
-        levelMap[x, y].MapCharacter = CommonData.MapCharacters["Stairway"];
+        LevelMap[x, y].MapCharacter = CommonData.MapCharacters["Stairway"];
     }
 
     private Tuple<MapSpace, MapSpace>? ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
@@ -210,15 +214,15 @@ public class MapLevel {
 
         if (newX > 0 && newX < _MAP_WIDTH && newY > 0 && newY < _MAP_HEIGHT)
         {
-            MapSpace possibleSuccessor = levelMap[newX, newY];
-            // MapSpace possibleSuccessor = new MapSpace(levelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
+            MapSpace possibleSuccessor = LevelMap[newX, newY];
+            // MapSpace possibleSuccessor = new MapSpace(LevelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
 
             if ((!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y))
                 && possibleSuccessor.MapCharacter == CommonData.MapCharacters["Empty"]
-                && levelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != CommonData.MapCharacters["Hallway"]
-                && levelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"]
-                && levelMap[possibleSuccessor.X, possibleSuccessor.Y - 1].MapCharacter != CommonData.MapCharacters["Hallway"]
-                && levelMap[possibleSuccessor.X - 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"])
+                && LevelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != CommonData.MapCharacters["Hallway"]
+                && LevelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"]
+                && LevelMap[possibleSuccessor.X, possibleSuccessor.Y - 1].MapCharacter != CommonData.MapCharacters["Hallway"]
+                && LevelMap[possibleSuccessor.X - 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"])
             {
                 int verticalWeight = 3;
 
@@ -325,7 +329,7 @@ public class MapLevel {
                     {
                         space.MapCharacter = CommonData.MapCharacters["Hallway"];
 
-                        levelMap[space.X, space.Y] = space;
+                        LevelMap[space.X, space.Y] = space;
                     }
 
                     doorwaysWithoutCorridors[region].Remove(closestDoorAndTargetDoor.Item1);
@@ -339,7 +343,7 @@ public class MapLevel {
 
     public MapSpace? GetStartingSpace()
     {
-        foreach (MapSpace space in levelMap)
+        foreach (MapSpace space in LevelMap)
         {
             if (space.MapCharacter == CommonData.MapCharacters["RoomFloor"])
             {
@@ -359,23 +363,23 @@ public class MapLevel {
     public List<MapSpace> GetValidNeighbours(MapSpace space) {
         List<MapSpace> validNeighbours = new List<MapSpace>();
 
-        if (IsValidSpace(levelMap[space.X, space.Y + 1])) {
-            validNeighbours.Add(levelMap[space.X, space.Y + 1]);
+        if (IsValidSpace(LevelMap[space.X, space.Y + 1])) {
+            validNeighbours.Add(LevelMap[space.X, space.Y + 1]);
         }
 
-        if (IsValidSpace(levelMap[space.X + 1, space.Y]))
+        if (IsValidSpace(LevelMap[space.X + 1, space.Y]))
         {
-            validNeighbours.Add(levelMap[space.X + 1, space.Y]);
+            validNeighbours.Add(LevelMap[space.X + 1, space.Y]);
         }
 
-        if (IsValidSpace(levelMap[space.X, space.Y - 1]))
+        if (IsValidSpace(LevelMap[space.X, space.Y - 1]))
         {
-            validNeighbours.Add(levelMap[space.X, space.Y - 1]);
+            validNeighbours.Add(LevelMap[space.X, space.Y - 1]);
         }
 
-        if (IsValidSpace(levelMap[space.X - 1, space.Y]))
+        if (IsValidSpace(LevelMap[space.X - 1, space.Y]))
         {
-            validNeighbours.Add(levelMap[space.X - 1, space.Y]);
+            validNeighbours.Add(LevelMap[space.X - 1, space.Y]);
         }
 
         return validNeighbours;
@@ -445,19 +449,19 @@ public class MapLevel {
             xPos = RandomObject.Next(1, _MAP_WIDTH);
             yPos = RandomObject.Next(1, _MAP_HEIGHT);
 
-            freeSpace = (levelMap[xPos, yPos].MapCharacter == CommonData.MapCharacters["RoomFloor"])
-                && levelMap[xPos, yPos].DisplayCharacter == null
-                && levelMap[xPos, yPos].ItemCharacter == null;
+            freeSpace = (LevelMap[xPos, yPos].MapCharacter == CommonData.MapCharacters["RoomFloor"])
+                && LevelMap[xPos, yPos].DisplayCharacter == null
+                && LevelMap[xPos, yPos].ItemCharacter == null;
         }
 
         // If the character is for the player or a monster, add
         // it to the Display character. Otherwise, use the item character.
         if (Living)
-            levelMap[xPos, yPos].DisplayCharacter = MapChar;
+            LevelMap[xPos, yPos].DisplayCharacter = MapChar;
         else
-            levelMap[xPos, yPos].ItemCharacter = MapChar;
+            LevelMap[xPos, yPos].ItemCharacter = MapChar;
 
-        return levelMap[xPos, yPos];
+        return LevelMap[xPos, yPos];
     }
 
     public void MoveDisplayItem(Player player, MapSpace newLocation) {
@@ -481,15 +485,15 @@ public class MapLevel {
         {
             for (int x = 0; x <= _MAP_WIDTH; x++)
             {
-                if (levelMap[x, y].Visible == false) {
-                    sbReturn.Append(levelMap[x, y].InvisibleCharacter);
+                if (LevelMap[x, y].Visible == false) {
+                    sbReturn.Append(LevelMap[x, y].InvisibleCharacter);
                 }
-                else if (levelMap[x, y].DisplayCharacter != null)
-                    sbReturn.Append(levelMap[x, y].DisplayCharacter);
-                else if (levelMap[x, y].ItemCharacter != null)
-                    sbReturn.Append(levelMap[x, y].ItemCharacter);
+                else if (LevelMap[x, y].DisplayCharacter != null)
+                    sbReturn.Append(LevelMap[x, y].DisplayCharacter);
+                else if (LevelMap[x, y].ItemCharacter != null)
+                    sbReturn.Append(LevelMap[x, y].ItemCharacter);
                 else
-                    sbReturn.Append(levelMap[x, y].MapCharacter);
+                    sbReturn.Append(LevelMap[x, y].MapCharacter);
             }
 
             sbReturn.Append("\n");

@@ -34,7 +34,7 @@ public abstract class CommonData {
         { "RoomCreation", 90 },
         { "DoorwayCreation", 90 },
         { "GoldGeneration", 65 },
-        { "RoomIsDark", 10 }
+        { "RoomIsDark", 50 }
     };
 
     public static readonly Dictionary<int, List<int>> RegionBoundaries = new Dictionary<int, List<int>>

@@ -3,7 +3,7 @@ using RogueProject.Models;
 using RogueProject.Models.Enums;
 
 namespace RogueProject;
-internal class Game
+public class Game
 {
     public MapLevel CurrentMap { get; set; }
     public int CurrentLevel { get; set; }
@@ -14,6 +14,7 @@ internal class Game
     public string Stats { get; set; }
     public bool GameWon {  get; set; }
     public const int MAX_LEVEL = 9;
+    public List<MapSpace> LitSpaces { get; set; }
 
     private static Random rand = new Random();
 
@@ -22,14 +23,15 @@ internal class Game
         // Setup a new game
         this.CurrentLevel = 1;
         this.VisitedLevels = new List<MapLevel>();
-        this.CurrentMap = new MapLevel();
+        this.CurrentMap = new MapLevel(this);
         this.CurrentPlayer = new Player(playerName);
-        this.CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(Player.CHARACTER, true);
+        this.CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(CommonData.MapCharacters["Player"], true);
         this.CurrentMap.InitialTorch();
         this.CurrentTurn = 0;
         this.StatusMessage = $"Welcome to the Dungeon, {this.CurrentPlayer.PlayerName} ...";
         this.Stats = $"Level: {CurrentLevel}   Gold: {CurrentPlayer.Gold}";
         this.GameWon = false;
+        this.LitSpaces = new List<MapSpace>();
     }
 
     public void KeyHandler(int keyValue, bool shiftKeyPressed)
@@ -101,11 +103,11 @@ internal class Game
 
         if (allowPass)
         {
-            CurrentMap.levelMap[CurrentPlayer.Location!.X, CurrentPlayer.Location.Y].DisplayCharacter = null;
+            CurrentMap.LevelMap[CurrentPlayer.Location!.X, CurrentPlayer.Location.Y].DisplayCharacter = null;
 
             if (staircaseDirection == StaircaseDirection.DOWN)
             {
-                CurrentMap.levelMap[CurrentPlayer.Location.X!, CurrentPlayer.Location.Y].DisplayCharacter = null;
+                CurrentMap.LevelMap[CurrentPlayer.Location.X!, CurrentPlayer.Location.Y].DisplayCharacter = null;
 
                 if (!VisitedLevels.Contains(CurrentMap)) {
                     VisitedLevels.Add(CurrentMap);
@@ -115,7 +117,7 @@ internal class Game
                     CurrentMap = VisitedLevels[CurrentLevel];
                 }
                 else {
-                    CurrentMap = new MapLevel();
+                    CurrentMap = new MapLevel(this);
                 }
                 CurrentLevel += (byte) staircaseDirection;
 
@@ -128,7 +130,7 @@ internal class Game
                 CurrentLevel += (byte) staircaseDirection;
             }
 
-            CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(Player.CHARACTER, true);
+            CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(CommonData.MapCharacters["Player"], true);
             this.StatusMessage = $"Welcome to level {CurrentLevel} rogue";
             UpdateStatsMessage();
 
@@ -167,6 +169,14 @@ internal class Game
     }
 
     private void Torch() {
+        foreach (MapSpace space in LitSpaces) {
+            if (space.MapCharacter == CommonData.MapCharacters["Player"]) {
+                space.Visible = false;
+
+            }
+        }
+
+        // needs deperate refactoring, written like shit
         // Making x number of squares in various directions visible once the player is nearby
         foreach (KeyValuePair<string, int[]> direction in CommonData.PlayerDirections) {
             for (int i = 1; i < 2; i++)
@@ -175,15 +185,22 @@ internal class Game
                 int newY = CurrentPlayer.Location.Y + direction.Value[1] * i;
 
                 // if newx and newy are within the bounds of the map
-                if (newX < CurrentMap.levelMap.GetLength(0) && newY < CurrentMap.levelMap.GetLength(1)) 
+                if (newX < CurrentMap.LevelMap.GetLength(0) && newY < CurrentMap.LevelMap.GetLength(1)) 
                 {
-                    MapSpace spaceToMakeVisible = CurrentMap.levelMap[newX, newY];
+                    MapSpace spaceToMakeVisible = CurrentMap.LevelMap[newX, newY];
 
                     if (spaceToMakeVisible.MapRoom == null || spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomDoor"]) {
                         spaceToMakeVisible.Visible = true;
                     }
+                    
+                    // Issue here is that I'm only accounting for desired positions, not the current players position
+                    spaceToMakeVisible.Visible = true;
+
+                    if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"]) {
+                        LitSpaces.Add(spaceToMakeVisible);
+                    }
                 }
-            }  
+            }
         }
     }
 
@@ -207,7 +224,7 @@ internal class Game
                 break;
         }
 
-        MapSpace desiredLocation = CurrentMap.levelMap[desiredX, desiredY];
+        MapSpace desiredLocation = CurrentMap.LevelMap[desiredX, desiredY];
 
         // List of characters a living character can move onto.
         List<char> charsAllowed =
