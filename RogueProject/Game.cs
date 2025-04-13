@@ -1,4 +1,5 @@
-﻿using RogueProject.Models;
+﻿using Rogueproject;
+using RogueProject.Models;
 using RogueProject.Models.Enums;
 
 namespace RogueProject;
@@ -24,7 +25,7 @@ internal class Game
         this.CurrentMap = new MapLevel();
         this.CurrentPlayer = new Player(playerName);
         this.CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(Player.CHARACTER, true);
-        InitialTorch();
+        this.CurrentMap.InitialTorch();
         this.CurrentTurn = 0;
         this.StatusMessage = $"Welcome to the Dungeon, {this.CurrentPlayer.PlayerName} ...";
         this.Stats = $"Level: {CurrentLevel}   Gold: {CurrentPlayer.Gold}";
@@ -135,6 +136,8 @@ internal class Game
             {
                 CurrentMap.PlaceMapCharacter(CommonData.MapCharacters["Amulet"], false);
             }
+
+            CurrentMap.InitialTorch();
         }
     }
 
@@ -163,43 +166,24 @@ internal class Game
         return message;
     }
 
-    private void InitialTorch() {
-        // Consider refactoring
-        List<MapSpace> spacesSurroundingPlayer = CurrentMap.SpacesSurroundingPlayer(CurrentMap.PlayersLocation());
-
-        foreach (MapSpace space in CurrentMap.levelMap)
-        {
-            if (spacesSurroundingPlayer.Contains(space))
-            {
-                space.Visible = true;
-            }
-        }
-    }
-
     private void Torch() {
         // Making x number of squares in various directions visible once the player is nearby
         foreach (KeyValuePair<string, int[]> direction in CommonData.PlayerDirections) {
-            if (direction.Key == "North" || direction.Key == "South")
+            for (int i = 1; i < 2; i++)
             {
-                for (int i = 1; i < 2; i++)
-                {
-                    CurrentMap.levelMap[CurrentPlayer.Location!.X + direction.Value[0] * i, CurrentPlayer.Location.Y + direction.Value[1] * i].Visible = true;
-                }
-            }
-            else if ((direction.Key.Contains("North") || direction.Key.Contains("South")) && (direction.Key != "North" && direction.Key != "South")) {
-                for (int i = 1; i < 3; i++)
-                {
-                    CurrentMap.levelMap[CurrentPlayer.Location!.X + direction.Value[0] * i, CurrentPlayer.Location.Y + direction.Value[1] * i].Visible = true;
-                }
-            }
-            else
-            {
-                for (int i = 1; i < 5; i++)
-                {
-                    CurrentMap.levelMap[CurrentPlayer.Location!.X + direction.Value[0] * i, CurrentPlayer.Location.Y + direction.Value[1] * i].Visible = true;
-                }
-            }
+                int newX = CurrentPlayer.Location!.X + direction.Value[0] * i;
+                int newY = CurrentPlayer.Location.Y + direction.Value[1] * i;
 
+                // if newx and newy are within the bounds of the map
+                if (newX < CurrentMap.levelMap.GetLength(0) && newY < CurrentMap.levelMap.GetLength(1)) 
+                {
+                    MapSpace spaceToMakeVisible = CurrentMap.levelMap[newX, newY];
+
+                    if (spaceToMakeVisible.MapRoom == null || spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomDoor"]) {
+                        spaceToMakeVisible.Visible = true;
+                    }
+                }
+            }  
         }
     }
 
@@ -245,7 +229,12 @@ internal class Game
             }
         }
 
-        // Make squares within a region of the player visible, and others not
+        if (desiredLocation.MapCharacter == CommonData.MapCharacters["RoomDoor"] && !desiredLocation.MapRoom.Visited) 
+        {
+            desiredLocation.MapRoom.MakeRoomVisible();
+        }
+
+        // Prevent this from being called on interior map characters (room floor, items, monsters, stairways, etc.)
         Torch();
     }
 }

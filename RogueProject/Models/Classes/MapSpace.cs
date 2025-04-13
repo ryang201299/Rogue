@@ -22,29 +22,50 @@ public class MapSpace {
     public MapSpace? Parent { get; set; }       // Parent node in the path
 
     public MapSpace() {
-        // Create blank space for map
-        this.MapCharacter = ' ';
-        this.SearchRequired = false;
-        X = 0;
-        Y = 0;
     }
 
-    public MapSpace(char mapChar, int X, int Y, int regionNumber) {
+    /// <summary>
+    /// Create empty space
+    /// </summary>
+    public MapSpace(int x, int y) {
+        // Create blank space for map
+        this.MapCharacter = CommonData.MapCharacters["Empty"];
+        this.SearchRequired = false;
+        this.X = x;
+        this.Y = y;
+    }
+
+    // Generic create space with character, region, and room associated
+    public MapSpace(char mapChar, int X, int Y, int regionNumber, MapRoom mapRoom) {
         // Create a non-blank space
         this.MapCharacter = mapChar;
         this.SearchRequired = false;
         this.X = X;
         this.Y = Y;
         this.Region = regionNumber;
+        this.MapRoom = mapRoom;
     }
 
-    public MapSpace(char mapChar, MapSpace oldSpace) {
-        // Update value for an existing space
+    // // Update an existing space? Not sure why this is needed, instead of just updating the fields
+    // public MapSpace(char mapChar, MapSpace oldSpace, MapRoom mapRoom) {
+    //     // Update value for an existing space
+    //     this.MapCharacter = mapChar;
+    //     this.SearchRequired = oldSpace.SearchRequired;
+    //     this.X = oldSpace.X;
+    //     this.Y = oldSpace.Y;
+    //     this.Region = oldSpace.Region;
+    //     this.MapRoom = mapRoom;
+    // }
+
+    // Create searchable space
+    public MapSpace(char mapChar, bool search, int X, int Y, int regionNumber, MapRoom mapRoom) {
+        // Allows for setting objects to be displayed or hidden
         this.MapCharacter = mapChar;
-        this.SearchRequired = oldSpace.SearchRequired;
-        this.X = oldSpace.X;
-        this.Y = oldSpace.Y;
-        this.Region = oldSpace.Region;
+        this.SearchRequired = search;
+        this.X = X;
+        this.Y = Y;
+        this.Region = regionNumber;
+        this.MapRoom = mapRoom;
     }
 
     public MapSpace(char mapChar, bool search, int X, int Y, int regionNumber) {

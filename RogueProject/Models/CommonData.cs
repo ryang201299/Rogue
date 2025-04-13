@@ -15,7 +15,8 @@ public abstract class CommonData {
         { "Stairway", '≣' },
         { "Empty", ' ' },
         { "Gold", '*' },
-        { "Amulet", '♀' }
+        { "Amulet", '♀' },
+        { "Player", '☺'}
     };
 
     public static readonly Dictionary<string, int[]> PlayerDirections = new Dictionary<string, int[]> {

@@ -42,8 +42,7 @@ namespace RogueProject
             this.Gold = 0;
             this.Experience = 1;
             this.HungerState = HungerLevel.Satisfied;
-            this.HungerTurn =
-                 rand.Next(MIN_FOODVALUE, MAX_FOODVALUE + 1);
+            this.HungerTurn = rand.Next(MIN_FOODVALUE, MAX_FOODVALUE + 1);
         }
     }
 }

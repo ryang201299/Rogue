@@ -54,21 +54,28 @@ public class MapLevel {
             foreach (MapSpace space in levelMap) {
                 space.Visible = false;
             }
-
         } while (!MapVerification());
     }
 
-    public MapSpace PlayersLocation() {
-        MapSpace playerLocation = new MapSpace();
+    public void InitialTorch() {
+        
+        MapRoom room = PlayersLocation().MapRoom;
+        room.MakeRoomVisible();
+        // CurrentMap.PlayersLocation().MapRoom.MakeRoomVisible();
 
+        room.Visited = true;
+        // CurrentMap.PlayersLocation().MapRoom.Visited = true;
+    }
+
+    // refactor this to avoid unnecessary return of new MapSpace()
+    public MapSpace PlayersLocation() {
         foreach (MapSpace space in levelMap) {
             if (space.DisplayCharacter == '☺') {
-                playerLocation = space;
-                break;
+                return space;
             }
         }
 
-        return playerLocation;
+        return new MapSpace();
     }
 
     public List<MapSpace> SpacesSurroundingPlayer(MapSpace playerLocation) {
@@ -126,12 +133,13 @@ public class MapLevel {
         }
 
         // For every pair of coordinates, if the space is not instantiated, instantiate it as empty
-        for (int y = 0; y <= levelMap.GetUpperBound(1); y++)
+        // GetUpperBound(1) is Y, GetUpperBound(0) is X
+        for (int x = 0; x <= levelMap.GetUpperBound(0); x++)
         {
-            for (int x = 0; x <= levelMap.GetUpperBound(0); x++)
+            for (int y = 0; y <= levelMap.GetUpperBound(1); y++)
             {
                 if (levelMap[x, y] is null)
-                    levelMap[x, y] = new MapSpace(CommonData.MapCharacters["Empty"], false, x, y, GetRegionNumber(x, y));
+                    levelMap[x, y] = new MapSpace(x, y);
             }
         }
 
@@ -152,7 +160,7 @@ public class MapLevel {
             y = RandomObject.Next(1, _MAP_HEIGHT);
         }
 
-        levelMap[x, y] = new MapSpace(CommonData.MapCharacters["Stairway"], x, y, GetRegionNumber(x, y));
+        levelMap[x, y].MapCharacter = CommonData.MapCharacters["Stairway"];
     }
 
     private Tuple<MapSpace, MapSpace>? ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
@@ -202,7 +210,8 @@ public class MapLevel {
 
         if (newX > 0 && newX < _MAP_WIDTH && newY > 0 && newY < _MAP_HEIGHT)
         {
-            MapSpace possibleSuccessor = new MapSpace(levelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
+            MapSpace possibleSuccessor = levelMap[newX, newY];
+            // MapSpace possibleSuccessor = new MapSpace(levelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
 
             if ((!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y))
                 && possibleSuccessor.MapCharacter == CommonData.MapCharacters["Empty"]

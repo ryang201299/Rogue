@@ -31,6 +31,8 @@ public class MapRoom {
         this.EastWallXAxis = eastWallXAxis;
         this.RegionNumber = regionNumber;
         this.LevelMap = levelMap;
+        this.MapSpaces = new List<MapSpace>();
+        this.Visited = false;
 
         ValidateMapRoomDimensions();
         PopulateRoom();
@@ -42,14 +44,21 @@ public class MapRoom {
             for (int x = WestWallXAxis; x <= EastWallXAxis; x++) {
                 if (y == SouthWallYAxis || y == NorthWallYAxis)
                 {
-                    LevelMap[x, y] = new MapSpace(CommonData.MapCharacters["Horizontal"], false, x, y, RegionNumber);
+                    MapSpace space = new MapSpace(CommonData.MapCharacters["Horizontal"], false, x, y, RegionNumber, this);
+                    LevelMap[x, y] = space;
+                    MapSpaces.Add(space);
+
                 }
                 else if (x == WestWallXAxis || x == EastWallXAxis)
                 {
-                    LevelMap[x, y] = new MapSpace(CommonData.MapCharacters["Vertical"], false, x, y, RegionNumber);
+                    MapSpace space = new MapSpace(CommonData.MapCharacters["Vertical"], false, x, y, RegionNumber, this);
+                    LevelMap[x, y] = space;
+                    MapSpaces.Add(space);
                 }
                 else if (LevelMap[x, y] == null) {
-                    LevelMap[x, y] = new MapSpace(CommonData.MapCharacters["RoomFloor"], false, x, y, RegionNumber);
+                    MapSpace space = new MapSpace(CommonData.MapCharacters["RoomFloor"], false, x, y, RegionNumber, this);
+                    LevelMap[x, y] = space;
+                    MapSpaces.Add(space);
                 }
             }
         }
@@ -57,10 +66,20 @@ public class MapRoom {
         GenerateDoors();
 
         // Lastly, the corners are filled in
-        LevelMap[WestWallXAxis, SouthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerNorthWest"], false, WestWallXAxis, SouthWallYAxis, RegionNumber);
-        LevelMap[EastWallXAxis, SouthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerNorthEast"], false, EastWallXAxis, SouthWallYAxis, RegionNumber);
-        LevelMap[WestWallXAxis, NorthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerSouthWest"], false, WestWallXAxis, NorthWallYAxis, RegionNumber);
-        LevelMap[EastWallXAxis, NorthWallYAxis] = new MapSpace(CommonData.MapCharacters["CornerSouthEast"], false, EastWallXAxis, NorthWallYAxis, RegionNumber); 
+        MapSpace cornerNorthWest = new MapSpace(CommonData.MapCharacters["CornerNorthWest"], false, WestWallXAxis, SouthWallYAxis, RegionNumber, this);
+        MapSpace cornerNorthEast = new MapSpace(CommonData.MapCharacters["CornerNorthEast"], false, EastWallXAxis, SouthWallYAxis, RegionNumber, this);
+        MapSpace cornerSouthWest = new MapSpace(CommonData.MapCharacters["CornerSouthWest"], false, WestWallXAxis, NorthWallYAxis, RegionNumber, this);
+        MapSpace cornerSouthEast = new MapSpace(CommonData.MapCharacters["CornerSouthEast"], false, EastWallXAxis, NorthWallYAxis, RegionNumber, this);
+
+        LevelMap[WestWallXAxis, SouthWallYAxis] = cornerNorthWest;
+        LevelMap[EastWallXAxis, SouthWallYAxis] = cornerNorthEast;
+        LevelMap[WestWallXAxis, NorthWallYAxis] = cornerSouthWest;
+        LevelMap[EastWallXAxis, NorthWallYAxis] = cornerSouthEast;
+
+        MapSpaces.Add(cornerNorthWest);
+        MapSpaces.Add(cornerNorthEast);
+        MapSpaces.Add(cornerSouthWest);
+        MapSpaces.Add(cornerSouthEast);
 
         GenerateGold();       
     }
@@ -111,6 +130,8 @@ public class MapRoom {
         foreach (MapSpace space in MapSpaces) {
             space.Visible = true;
         }
+
+        this.Visited = true;
     }
 
     public void GenerateDoors() {
@@ -125,13 +146,19 @@ public class MapRoom {
                 doorway = RandomObject.Next(WestWallXAxis + 1, EastWallXAxis);
 
                 // create new door space
-                LevelMap[doorway, SouthWallYAxis] = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, doorway, SouthWallYAxis, RegionNumber);
+                MapSpace door = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, doorway, SouthWallYAxis, RegionNumber, this);
+                LevelMap[doorway, SouthWallYAxis] = door;
+                MapSpaces.Add(door);
 
                 // create new hallway space one square further away in same direction
-                LevelMap[doorway, SouthWallYAxis - 1] = new MapSpace(CommonData.MapCharacters["Empty"], false, doorway, SouthWallYAxis - 1, RegionNumber);
+                MapSpace doorwayHallway = new MapSpace(CommonData.MapCharacters["Empty"], false, doorway, SouthWallYAxis - 1, RegionNumber);
+                LevelMap[doorway, SouthWallYAxis - 1] = doorwayHallway;
 
-                // add to deadends dictionary
-                AllDoorways[RegionNumber].Add(LevelMap[doorway, SouthWallYAxis - 1]);
+                // Not sure if this should be added?
+                // MapSpaces.Add(doorwayHallway);
+
+                // Refactor to use doorway object instead of coords
+                AllDoorways[RegionNumber].Add(doorwayHallway);
 
                 // Increment door count
                 doorCount += 1;
@@ -141,9 +168,13 @@ public class MapRoom {
             if (RegionNumber <= 6 && RandomObject.Next(101) <= CommonData.Probabilities["DoorwayCreation"]) {
                 doorway = RandomObject.Next(WestWallXAxis + 1, EastWallXAxis);
 
-                LevelMap[doorway, NorthWallYAxis] = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, doorway, NorthWallYAxis, RegionNumber);
+                MapSpace door = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, doorway, NorthWallYAxis, RegionNumber, this);
+                LevelMap[doorway, NorthWallYAxis] = door;
+                MapSpaces.Add(door);
 
-                LevelMap[doorway, NorthWallYAxis + 1] = new MapSpace(CommonData.MapCharacters["Empty"], false, doorway, NorthWallYAxis + 1, RegionNumber);
+                MapSpace doorwayHallway = new MapSpace(CommonData.MapCharacters["Empty"], false, doorway, NorthWallYAxis + 1, RegionNumber);
+                LevelMap[doorway, NorthWallYAxis + 1] = doorwayHallway;
+                // MapSpaces.Add(doorwayHallway);
 
                 AllDoorways[RegionNumber].Add(LevelMap[doorway, NorthWallYAxis + 1]);
 
@@ -154,22 +185,32 @@ public class MapRoom {
             if ("147258".Contains(RegionNumber.ToString()) && RandomObject.Next(101) <= CommonData.Probabilities["DoorwayCreation"]) {
                 doorway = RandomObject.Next(SouthWallYAxis + 1, NorthWallYAxis);
 
-                LevelMap[EastWallXAxis, doorway] = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, EastWallXAxis, doorway, RegionNumber);
+                MapSpace door = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, EastWallXAxis, doorway, RegionNumber, this);
+                LevelMap[EastWallXAxis, doorway] = door;
+                MapSpaces.Add(door);
 
-                LevelMap[EastWallXAxis + 1, doorway] = new MapSpace(CommonData.MapCharacters["Empty"], false, EastWallXAxis + 1, doorway, RegionNumber);
+                MapSpace doorwayHallway = new MapSpace(CommonData.MapCharacters["Empty"], false, EastWallXAxis + 1, doorway, RegionNumber);
+                LevelMap[EastWallXAxis + 1, doorway] = doorwayHallway;
+                // MapSpaces.Add(doorwayHallway);
 
                 AllDoorways[RegionNumber].Add(LevelMap[EastWallXAxis + 1, doorway]);
 
                 doorCount += 1;
             }
 
+
+            // Refactor to iterate over MapRegions?
             // West doorways
             if ("258369".Contains(RegionNumber.ToString()) && RandomObject.Next(101) <= CommonData.Probabilities["DoorwayCreation"]) {
                 doorway = RandomObject.Next(SouthWallYAxis + 1, NorthWallYAxis);
 
-                LevelMap[WestWallXAxis, doorway] = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, WestWallXAxis, doorway, RegionNumber);
+                MapSpace door = new MapSpace(CommonData.MapCharacters["RoomDoor"], false, WestWallXAxis, doorway, RegionNumber, this);
+                LevelMap[WestWallXAxis, doorway] = door;
+                MapSpaces.Add(door);
 
-                LevelMap[WestWallXAxis - 1, doorway] = new MapSpace(CommonData.MapCharacters["Empty"], false, WestWallXAxis - 1, doorway, RegionNumber);
+                MapSpace doorwayHallway = new MapSpace(CommonData.MapCharacters["Empty"], false, WestWallXAxis - 1, doorway, RegionNumber);
+                LevelMap[WestWallXAxis - 1, doorway] = doorwayHallway;
+                // MapSpaces.Add(doorwayHallway);
 
                 AllDoorways[RegionNumber].Add(LevelMap[WestWallXAxis - 1, doorway]);
 
