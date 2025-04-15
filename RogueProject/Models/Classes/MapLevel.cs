@@ -74,7 +74,7 @@ public class MapLevel {
     // refactor this to avoid unnecessary return of new MapSpace()
     public MapSpace PlayersLocation() {
         foreach (MapSpace space in LevelMap) {
-            if (space.DisplayCharacter == '☺') {
+            if (space.DisplayCharacter == CommonData.MapCharacters["Player"]) {
                 return space;
             }
         }

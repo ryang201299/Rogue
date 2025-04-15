@@ -169,10 +169,13 @@ public class Game
     }
 
     private void Torch() {
-        foreach (MapSpace space in LitSpaces) {
-            if (space.MapCharacter == CommonData.MapCharacters["Player"]) {
-                space.Visible = false;
+        if (CurrentPlayer.Location.MapRoom != null && !CurrentPlayer.Location.MapRoom.IsDark) {
+            return;
+        }
 
+        foreach (MapSpace space in LitSpaces) {
+            if (space != CurrentPlayer.Location) {
+                space.Visible = false;
             }
         }
 
