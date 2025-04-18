@@ -17,3 +17,4 @@
 # Ignore build directories (example for CMake)
 RogueProject/bin/
 RogueProject/obj/
+RogueProject/.vs/
