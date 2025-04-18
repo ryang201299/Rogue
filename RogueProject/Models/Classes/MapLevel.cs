@@ -167,6 +167,7 @@ public class MapLevel {
         LevelMap[x, y].MapCharacter = CommonData.MapCharacters["Stairway"];
     }
 
+    #region "Hallway Generation"
     private Tuple<MapSpace, MapSpace>? ClosestDoorway(List<MapSpace> doorwaysWithoutCorridorsInCurrentRegion, Dictionary<int, List<MapSpace>> allDoorwaysWithoutCorridors)
         {
         MapSpace? closestDoorwayInCurrentRegion = null;
@@ -340,7 +341,7 @@ public class MapLevel {
             }
         }
     }
-
+    #endregion
     public MapSpace? GetStartingSpace()
     {
         foreach (MapSpace space in LevelMap)
@@ -384,7 +385,6 @@ public class MapLevel {
 
         return validNeighbours;
     }
-
 
     public bool MapVerification()
     {

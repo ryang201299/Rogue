@@ -169,10 +169,6 @@ public class Game
     }
 
     private void Torch() {
-        if (CurrentPlayer.Location.MapRoom != null && !CurrentPlayer.Location.MapRoom.IsDark) {
-            return;
-        }
-
         foreach (MapSpace space in LitSpaces) {
             if (space != CurrentPlayer.Location) {
                 space.Visible = false;
@@ -196,10 +192,9 @@ public class Game
                         spaceToMakeVisible.Visible = true;
                     }
                     
-                    // Issue here is that I'm only accounting for desired positions, not the current players position
                     spaceToMakeVisible.Visible = true;
 
-                    if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"]) {
+                    if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"] && spaceToMakeVisible.MapRoom.IsDark) {
                         LitSpaces.Add(spaceToMakeVisible);
                     }
                 }
