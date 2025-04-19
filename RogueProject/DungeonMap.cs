@@ -39,6 +39,7 @@ namespace RogueProject
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
                 lblStats.Text = currentGame.Stats;
+                panelMap.Invalidate();
             }
             else
             {

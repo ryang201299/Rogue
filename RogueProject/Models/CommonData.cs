@@ -39,15 +39,15 @@ public abstract class CommonData {
 
     public static readonly Dictionary<int, List<int>> RegionBoundaries = new Dictionary<int, List<int>>
     {
-        { 1, new List<int> { 6, 24, 1, 1 }},
-        { 2, new List<int> { 6, 50, 1, 27}},
-        { 3, new List<int> { 6, 76, 1, 53 }},
-        { 4, new List<int> { 14, 24, 9, 1 }},
-        { 5, new List<int> { 14, 50, 9, 27 }},
-        { 6, new List<int> { 14, 76, 9, 53 }},
-        { 7, new List<int> { 22, 24, 17, 1 }},
-        { 8, new List<int> { 22, 50, 17, 27 }},
-        { 9, new List<int> { 22, 76, 17, 53 }},
+        { 1, new List<int> { 10, 22,  1,  1 }},   // row=0, col=0
+        { 2, new List<int> { 10, 45,  1, 24 }},   // row=0, col=1
+        { 3, new List<int> { 10, 68,  1, 47 }},   // row=0, col=2
+        { 4, new List<int> { 21, 22, 12,  1 }},   // row=1, col=0
+        { 5, new List<int> { 21, 45, 12, 24 }},   // row=1, col=1
+        { 6, new List<int> { 21, 68, 12, 47 }},   // row=1, col=2
+        { 7, new List<int> { 32, 22, 23,  1 }},   // row=2, col=0
+        { 8, new List<int> { 32, 45, 23, 24 }},   // row=2, col=1
+        { 9, new List<int> { 32, 68, 23, 47 }},   // row=2, col=2
     };
 
     public static readonly Dictionary<string, short> ItemValues = new Dictionary<string, short> {

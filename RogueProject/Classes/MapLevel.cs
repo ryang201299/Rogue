@@ -6,12 +6,12 @@ using RogueProject.Models;
 namespace RogueProject;
 public class MapLevel {
     // Map measurements
-    private const short _REGION_WIDTH = 26;
-    private const short _REGION_HEIGHT = 8;
-    private const short _MAP_WIDTH = 78;
-    private const short _MAP_HEIGHT = 24;
-    private const short _MAX_ROOM_WIDTH = 22;
-    private const short _MAX_ROOM_HEIGHT = 5;
+    private const short _REGION_WIDTH = 23;
+    private const short _REGION_HEIGHT = 11;
+    private const short _MAP_WIDTH = 68;
+    private const short _MAP_HEIGHT = 34;
+    private const short _MAX_ROOM_WIDTH = 19;
+    private const short _MAX_ROOM_HEIGHT = 7;
     private const short _MIN_ROOM_WIDTH = 4;
     private const short _MIN_ROOM_HEIGHT = 4;
 
@@ -30,7 +30,7 @@ public class MapLevel {
 
         do
         {
-            this.LevelMap = new MapSpace[60, 35];
+            this.LevelMap = new MapSpace[70, 35];
 
             this.MapRegions = new List<MapRegion>();
 

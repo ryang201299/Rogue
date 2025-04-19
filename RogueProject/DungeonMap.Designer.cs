@@ -138,9 +138,9 @@ namespace RogueProject
             // panelMap
             // 
             panelMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelMap.Location = new Point(99, 104);
+            panelMap.Location = new Point(65, 104);
             panelMap.Name = "panelMap";
-            panelMap.Size = new Size(1120, 544);
+            panelMap.Size = new Size(1154, 544);
             panelMap.TabIndex = 7;
             panelMap.Paint += panelMap_Paint;
             // 
