@@ -5,15 +5,20 @@ using RogueProject.Models;
 
 namespace RogueProject;
 public class MapLevel {
+    #region "Properties"
     // Map measurements
-    private const short _REGION_WIDTH = 23;
-    private const short _REGION_HEIGHT = 11;
-    private const short _MAP_WIDTH = 68;
-    private const short _MAP_HEIGHT = 34;
+    private const short _MAP_WIDTH = 70;
+    private const short _MAP_HEIGHT = 35;
+    private const short _REGION_WIDTH = _MAP_WIDTH / 3 - 1;
+    private const short _REGION_HEIGHT = _MAP_HEIGHT / 3 - 1;
+    // Map height minus 1, to account for using map height as an index
+    private const short _MAP_HEIGHT_MAX_INDEX = _MAP_HEIGHT - 1;
+    private const short _MAP_WIDTH_MAX_INDEX = _MAP_WIDTH - 1;
     private const short _MAX_ROOM_WIDTH = 19;
-    private const short _MAX_ROOM_HEIGHT = 7;
-    private const short _MIN_ROOM_WIDTH = 4;
-    private const short _MIN_ROOM_HEIGHT = 4;
+    private const short _MAX_ROOM_HEIGHT = 8;
+    private const short _MIN_ROOM_WIDTH = 7;
+    private const short _MIN_ROOM_HEIGHT = 5;
+    #endregion
 
     private readonly Dictionary<int, List<MapSpace>> _allDoorways;
 
@@ -30,7 +35,7 @@ public class MapLevel {
 
         do
         {
-            this.LevelMap = new MapSpace[70, 35];
+            this.LevelMap = new MapSpace[_MAP_WIDTH, _MAP_HEIGHT];
 
             this.MapRegions = new List<MapRegion>();
 
@@ -160,8 +165,8 @@ public class MapLevel {
         // and mark it as a hallway.
         while (LevelMap[x, y].MapCharacter != CommonData.MapCharacters["RoomFloor"])
         {
-            x = RandomObject.Next(1, _MAP_WIDTH);
-            y = RandomObject.Next(1, _MAP_HEIGHT);
+            x = RandomObject.Next(1, _MAP_WIDTH_MAX_INDEX);
+            y = RandomObject.Next(1, _MAP_HEIGHT_MAX_INDEX);
         }
 
         LevelMap[x, y].MapCharacter = CommonData.MapCharacters["Stairway"];
@@ -173,8 +178,6 @@ public class MapLevel {
         MapSpace? closestDoorwayInCurrentRegion = null;
         MapSpace? closestDoorwayInOtherRegion = null;
         int shortestDistance = int.MaxValue;
-
-        int verticalWeight = 2;
 
         foreach (MapSpace currentRegionDoorway in doorwaysWithoutCorridorsInCurrentRegion)
         {
@@ -188,7 +191,8 @@ public class MapLevel {
                 foreach (MapSpace otherRegionDoorway in otherRegionDoorways.Value)
                 {
                     // Applies manhattan alg to determine distance
-                    int currentDistance = Math.Abs(currentRegionDoorway.X - otherRegionDoorway.X) + Math.Abs(currentRegionDoorway.Y - otherRegionDoorway.Y) * verticalWeight;
+                    // To apply a weighting, just multiply either the collective x .abs, or y .abs by an integer i.e. 2
+                    int currentDistance = Math.Abs(currentRegionDoorway.X - otherRegionDoorway.X) + Math.Abs(currentRegionDoorway.Y - otherRegionDoorway.Y);
                     if (currentDistance < shortestDistance)
                     {
                         shortestDistance = currentDistance;
@@ -213,7 +217,7 @@ public class MapLevel {
         int newX = currentPosition.X + xDifference;
         int newY = currentPosition.Y + yDifference;
 
-        if (newX > 0 && newX < _MAP_WIDTH && newY > 0 && newY < _MAP_HEIGHT)
+        if (newX > 0 && newX < _MAP_WIDTH_MAX_INDEX && newY > 0 && newY < _MAP_HEIGHT_MAX_INDEX)
         {
             MapSpace possibleSuccessor = LevelMap[newX, newY];
             // MapSpace possibleSuccessor = new MapSpace(LevelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
@@ -320,7 +324,7 @@ public class MapLevel {
 
                     List<MapSpace> path = AStar(closestDoorAndTargetDoor.Item1, closestDoorAndTargetDoor.Item2);
 
-                    if (path.Count > 30 || path.Count == 0) {
+                    if (path.Count > 20 || path.Count == 0) {
                         // Create deadend
 
                         break;
@@ -446,8 +450,8 @@ public class MapLevel {
 
         while (!freeSpace)
         {
-            xPos = RandomObject.Next(1, _MAP_WIDTH);
-            yPos = RandomObject.Next(1, _MAP_HEIGHT);
+            xPos = RandomObject.Next(1, _MAP_WIDTH_MAX_INDEX);
+            yPos = RandomObject.Next(1, _MAP_HEIGHT_MAX_INDEX);
 
             freeSpace = (LevelMap[xPos, yPos].MapCharacter == CommonData.MapCharacters["RoomFloor"])
                 && LevelMap[xPos, yPos].DisplayCharacter == null
@@ -481,9 +485,9 @@ public class MapLevel {
         // Output the array to text for display.
         StringBuilder sbReturn = new StringBuilder();
 
-        for (int y = 0; y <= _MAP_HEIGHT; y++)
+        for (int y = 0; y <= _MAP_HEIGHT_MAX_INDEX; y++)
         {
-            for (int x = 0; x <= _MAP_WIDTH; x++)
+            for (int x = 0; x <= _MAP_WIDTH_MAX_INDEX; x++)
             {
                 if (LevelMap[x, y].Visible == false) {
                     sbReturn.Append(LevelMap[x, y].InvisibleCharacter);
