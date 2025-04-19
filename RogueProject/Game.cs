@@ -175,7 +175,6 @@ public class Game
             }
         }
 
-        // needs deperate refactoring, written like shit
         // Making x number of squares in various directions visible once the player is nearby
         foreach (KeyValuePair<string, int[]> direction in CommonData.PlayerDirections) {
             for (int i = 1; i < 2; i++)
@@ -188,12 +187,11 @@ public class Game
                 {
                     MapSpace spaceToMakeVisible = CurrentMap.LevelMap[newX, newY];
 
-                    if (spaceToMakeVisible.MapRoom == null || spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomDoor"]) {
+                    if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"] || spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["Hallway"] || spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomDoor"]) {
                         spaceToMakeVisible.Visible = true;
                     }
                     
-                    spaceToMakeVisible.Visible = true;
-
+                    // Add to list of spaces that will be made invisible once the player walks away
                     if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"] && spaceToMakeVisible.MapRoom.IsDark) {
                         LitSpaces.Add(spaceToMakeVisible);
                     }
