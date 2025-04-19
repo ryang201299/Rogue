@@ -138,9 +138,9 @@ namespace RogueProject
             // panelMap
             // 
             panelMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelMap.Location = new Point(162, 104);
+            panelMap.Location = new Point(99, 104);
             panelMap.Name = "panelMap";
-            panelMap.Size = new Size(960, 560);
+            panelMap.Size = new Size(1120, 544);
             panelMap.TabIndex = 7;
             panelMap.Paint += panelMap_Paint;
             // 
@@ -188,12 +188,12 @@ namespace RogueProject
 
             if (levelMap != null)
             {
-                for (int y = 0; y < levelMap.GetLength(0); y++)
+                for (int x = 0; x < levelMap.GetLength(0); x++)
                 {
-                    for (int x = 0; x < levelMap.GetLength(1); x++)
+                    for (int y = 0; y < levelMap.GetLength(1); y++)
                     {
                         // Get the character representing this tile
-                        char symbol = levelMap[y, x].MapCharacter; // Adjust if needed
+                        char symbol = levelMap[x, y].MapCharacter; // Adjust if needed
 
                         // Try to get the matching tile rectangle
                         if (tileMap.TryGetValue(symbol, out var srcRect))

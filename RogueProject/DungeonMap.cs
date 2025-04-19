@@ -1,5 +1,4 @@
 using System.Diagnostics;
-using RogueProject.Models.Enums;
 
 namespace RogueProject
 {
@@ -13,6 +12,11 @@ namespace RogueProject
             InitializeComponent();
 
             tileSet = new Bitmap("Tilesheet/test-tilesheet.png"); // Make sure this path is correct
+
+            typeof(Panel).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+                null, panelMap, new object[] { true });
+
         }
 
         private void Form1_Load(object sender, EventArgs e)

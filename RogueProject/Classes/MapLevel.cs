@@ -30,7 +30,7 @@ public class MapLevel {
 
         do
         {
-            this.LevelMap = new MapSpace[80, 25];
+            this.LevelMap = new MapSpace[60, 35];
 
             this.MapRegions = new List<MapRegion>();
 
