@@ -6,10 +6,13 @@ namespace RogueProject
     public partial class DungeonMain : Form
     {
         private Game? currentGame;
+        private MapSpace[,]? levelMap;
 
         public DungeonMain()
         {
             InitializeComponent();
+
+            tileSet = new Bitmap("Tilesheet/test-tilesheet.png"); // Make sure this path is correct
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -27,6 +30,7 @@ namespace RogueProject
             if (PlayerNameBox.TextLength > 0)
             {
                 currentGame = new Game(PlayerNameBox.Text);
+                levelMap = currentGame.CurrentMap.LevelMap;
                 PlayerNamePanel.Visible = false;
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
@@ -55,6 +59,8 @@ namespace RogueProject
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
                 lblStats.Text = currentGame.Stats;
+
+                panelMap.Invalidate();
             }
         }
 

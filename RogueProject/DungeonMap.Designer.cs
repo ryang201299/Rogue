@@ -1,4 +1,7 @@
-﻿namespace RogueProject
+﻿using RogueProject.Models;
+using RogueProject;
+
+namespace RogueProject
 {
     partial class DungeonMain
     {
@@ -6,6 +9,26 @@
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+
+        private Bitmap tileSet;
+
+        private Dictionary<char, Rectangle> tileMap = new()
+        {
+            { CommonData.MapCharacters["Horizontal"], new Rectangle(0, 0, 16, 16) },
+            { CommonData.MapCharacters["Vertical"], new Rectangle(16, 0, 16, 16) },
+            { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 0, 16, 16) },
+            { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(48, 0, 16, 16) },
+            { CommonData.MapCharacters["CornerNorthEast"], new Rectangle(0, 16, 16, 16) },
+            { CommonData.MapCharacters["CornerSouthWest"], new Rectangle(16, 16, 16, 16) },
+            { CommonData.MapCharacters["RoomFloor"], new Rectangle(32, 16, 16, 16) },
+            { CommonData.MapCharacters["RoomDoor"], new Rectangle(48, 16, 16, 16) },
+            { CommonData.MapCharacters["Empty"], new Rectangle(0, 32, 16, 16) },
+            { CommonData.MapCharacters["Stairway"], new Rectangle(16, 32, 16, 16) },
+            { CommonData.MapCharacters["Hallway"], new Rectangle(32, 32, 16, 16) },
+            { CommonData.MapCharacters["Gold"], new Rectangle(48, 32, 16, 16) },
+            { CommonData.MapCharacters["Amulet"], new Rectangle(0, 48, 16, 16) },
+            { CommonData.MapCharacters["Player"], new Rectangle(16, 48, 16, 16) },
+        };
 
         /// <summary>
         ///  Clean up any resources being used.
@@ -35,6 +58,7 @@
             label1 = new Label();
             PlayerNameBox = new TextBox();
             lblStats = new Label();
+            panelMap = new Panel();
             PlayerNamePanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -52,7 +76,7 @@
             btnStart.Anchor = AnchorStyles.None;
             btnStart.BackColor = Color.Black;
             btnStart.ForeColor = Color.FromArgb(255, 128, 0);
-            btnStart.Location = new Point(741, 89);
+            btnStart.Location = new Point(795, 89);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(111, 33);
             btnStart.TabIndex = 2;
@@ -65,7 +89,7 @@
             lblArray.Dock = DockStyle.Fill;
             lblArray.Location = new Point(0, 0);
             lblArray.Name = "lblArray";
-            lblArray.Size = new Size(1175, 766);
+            lblArray.Size = new Size(1282, 766);
             lblArray.TabIndex = 4;
             lblArray.TextAlign = ContentAlignment.TopCenter;
             lblArray.Click += lblArray_Click;
@@ -78,14 +102,14 @@
             PlayerNamePanel.Controls.Add(btnStart);
             PlayerNamePanel.Location = new Point(96, 198);
             PlayerNamePanel.Name = "PlayerNamePanel";
-            PlayerNamePanel.Size = new Size(959, 204);
+            PlayerNamePanel.Size = new Size(1066, 204);
             PlayerNamePanel.TabIndex = 5;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(102, 89);
+            label1.Location = new Point(156, 89);
             label1.Name = "label1";
             label1.Size = new Size(350, 28);
             label1.TabIndex = 3;
@@ -97,7 +121,7 @@
             PlayerNameBox.BackColor = SystemColors.InfoText;
             PlayerNameBox.BorderStyle = BorderStyle.FixedSingle;
             PlayerNameBox.ForeColor = SystemColors.Window;
-            PlayerNameBox.Location = new Point(452, 89);
+            PlayerNameBox.Location = new Point(506, 89);
             PlayerNameBox.Name = "PlayerNameBox";
             PlayerNameBox.Size = new Size(283, 35);
             PlayerNameBox.TabIndex = 0;
@@ -111,14 +135,24 @@
             lblStats.Size = new Size(0, 28);
             lblStats.TabIndex = 6;
             // 
+            // panelMap
+            // 
+            panelMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelMap.Location = new Point(162, 104);
+            panelMap.Name = "panelMap";
+            panelMap.Size = new Size(960, 560);
+            panelMap.TabIndex = 7;
+            panelMap.Paint += panelMap_Paint;
+            // 
             // DungeonMain
             // 
             AutoScaleDimensions = new SizeF(13F, 27F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(1175, 766);
-            Controls.Add(lblStats);
+            ClientSize = new Size(1282, 766);
             Controls.Add(PlayerNamePanel);
+            Controls.Add(panelMap);
+            Controls.Add(lblStats);
             Controls.Add(lblStatus);
             Controls.Add(lblArray);
             Font = new Font("Consolas", 14F, FontStyle.Bold);
@@ -146,5 +180,35 @@
         private TextBox PlayerNameBox;
         private Label label1;
         private Label lblStats;
+        private Panel panelMap;
+
+        private void panelMap_Paint(object sender, PaintEventArgs e)
+        {
+            int tileSize = 16;
+
+            if (levelMap != null)
+            {
+                for (int y = 0; y < levelMap.GetLength(0); y++)
+                {
+                    for (int x = 0; x < levelMap.GetLength(1); x++)
+                    {
+                        // Get the character representing this tile
+                        char symbol = levelMap[y, x].MapCharacter; // Adjust if needed
+
+                        // Try to get the matching tile rectangle
+                        if (tileMap.TryGetValue(symbol, out var srcRect))
+                        {
+                            // Destination on the screen
+                            Rectangle destRect = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+
+                            // Draw the part of the tileSet image for this tile
+                            e.Graphics.DrawImage(tileSet, destRect, srcRect, GraphicsUnit.Pixel);
+                        }
+                    }
+                }
+            }
+
+        }
+
     }
 }
