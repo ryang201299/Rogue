@@ -17,7 +17,7 @@ namespace RogueProject
             { CommonData.MapCharacters["Gold"], new Rectangle(0, 0, 16, 16) },
             { CommonData.MapCharacters["Player"], new Rectangle(16, 0, 16, 16) },
             { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 32, 16, 16) },
-            { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(32, 0, 16, 16) },
+            { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(32, 48, 16, 16) },
             { CommonData.MapCharacters["CornerNorthEast"], new Rectangle(16, 32, 16, 16) },
             { CommonData.MapCharacters["CornerSouthWest"], new Rectangle(48, 48, 16, 16) },
             { CommonData.MapCharacters["RoomFloor"], new Rectangle(32, 16, 16, 16) },
@@ -76,7 +76,7 @@ namespace RogueProject
             btnStart.Anchor = AnchorStyles.None;
             btnStart.BackColor = Color.Black;
             btnStart.ForeColor = Color.FromArgb(255, 128, 0);
-            btnStart.Location = new Point(795, 89);
+            btnStart.Location = new Point(1005, 222);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(111, 33);
             btnStart.TabIndex = 2;
@@ -89,7 +89,7 @@ namespace RogueProject
             lblArray.Dock = DockStyle.Fill;
             lblArray.Location = new Point(0, 0);
             lblArray.Name = "lblArray";
-            lblArray.Size = new Size(1282, 766);
+            lblArray.Size = new Size(1702, 1033);
             lblArray.TabIndex = 4;
             lblArray.TextAlign = ContentAlignment.TopCenter;
             lblArray.Click += lblArray_Click;
@@ -102,14 +102,14 @@ namespace RogueProject
             PlayerNamePanel.Controls.Add(btnStart);
             PlayerNamePanel.Location = new Point(96, 198);
             PlayerNamePanel.Name = "PlayerNamePanel";
-            PlayerNamePanel.Size = new Size(1066, 204);
+            PlayerNamePanel.Size = new Size(1486, 471);
             PlayerNamePanel.TabIndex = 5;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(156, 89);
+            label1.Location = new Point(366, 222);
             label1.Name = "label1";
             label1.Size = new Size(350, 28);
             label1.TabIndex = 3;
@@ -121,7 +121,7 @@ namespace RogueProject
             PlayerNameBox.BackColor = SystemColors.InfoText;
             PlayerNameBox.BorderStyle = BorderStyle.FixedSingle;
             PlayerNameBox.ForeColor = SystemColors.Window;
-            PlayerNameBox.Location = new Point(506, 89);
+            PlayerNameBox.Location = new Point(716, 222);
             PlayerNameBox.Name = "PlayerNameBox";
             PlayerNameBox.Size = new Size(283, 35);
             PlayerNameBox.TabIndex = 0;
@@ -130,7 +130,7 @@ namespace RogueProject
             // 
             lblStats.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblStats.AutoSize = true;
-            lblStats.Location = new Point(29, 694);
+            lblStats.Location = new Point(29, 961);
             lblStats.Name = "lblStats";
             lblStats.Size = new Size(0, 28);
             lblStats.TabIndex = 6;
@@ -138,9 +138,9 @@ namespace RogueProject
             // panelMap
             // 
             panelMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelMap.Location = new Point(65, 104);
+            panelMap.Location = new Point(29, 52);
             panelMap.Name = "panelMap";
-            panelMap.Size = new Size(1154, 544);
+            panelMap.Size = new Size(1644, 848);
             panelMap.TabIndex = 7;
             panelMap.Paint += panelMap_Paint;
             // 
@@ -149,7 +149,7 @@ namespace RogueProject
             AutoScaleDimensions = new SizeF(13F, 27F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(1282, 766);
+            ClientSize = new Size(1702, 1033);
             Controls.Add(PlayerNamePanel);
             Controls.Add(panelMap);
             Controls.Add(lblStats);
@@ -184,7 +184,7 @@ namespace RogueProject
 
         private void panelMap_Paint(object sender, PaintEventArgs e)
         {
-            int tileSize = 16;
+            int tileSize = 32;
 
             if (levelMap != null)
             {
@@ -193,7 +193,22 @@ namespace RogueProject
                     for (int y = 0; y < levelMap.GetLength(1); y++)
                     {
                         // Get the character representing this tile
-                        char symbol = levelMap[x, y].MapCharacter; // Adjust if needed
+                        char symbol = levelMap[x, y].MapCharacter;
+
+                        if (levelMap[x, y].DisplayCharacter != null) 
+                        {
+                            symbol = (char)levelMap[x, y].DisplayCharacter;
+                        }
+
+                        if (levelMap[x, y].ItemCharacter != null)
+                        {
+                            symbol = (char)levelMap[x, y].ItemCharacter;
+                        }
+
+                        if (!levelMap[x, y].Visible)
+                        {
+                            symbol = CommonData.MapCharacters["Empty"];
+                        }
 
                         // Try to get the matching tile rectangle
                         if (tileMap.TryGetValue(symbol, out var srcRect))

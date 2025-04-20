@@ -7,17 +7,17 @@ namespace RogueProject;
 public class MapLevel {
     #region "Properties"
     // Map measurements
-    private const short _MAP_WIDTH = 70;
-    private const short _MAP_HEIGHT = 35;
-    private const short _REGION_WIDTH = _MAP_WIDTH / 3 - 1;
-    private const short _REGION_HEIGHT = _MAP_HEIGHT / 3 - 1;
+    private const short _MAP_WIDTH = 50;
+    private const short _MAP_HEIGHT = 30;
+    private const short _REGION_WIDTH = (_MAP_WIDTH -1) / 3;
+    private const short _REGION_HEIGHT = (_MAP_HEIGHT - 1) / 3;
     // Map height minus 1, to account for using map height as an index
     private const short _MAP_HEIGHT_MAX_INDEX = _MAP_HEIGHT - 1;
     private const short _MAP_WIDTH_MAX_INDEX = _MAP_WIDTH - 1;
-    private const short _MAX_ROOM_WIDTH = 19;
-    private const short _MAX_ROOM_HEIGHT = 8;
-    private const short _MIN_ROOM_WIDTH = 7;
-    private const short _MIN_ROOM_HEIGHT = 5;
+    private const short _MAX_ROOM_WIDTH = 12;
+    private const short _MAX_ROOM_HEIGHT = 6;
+    private const short _MIN_ROOM_WIDTH = 5;
+    private const short _MIN_ROOM_HEIGHT = 4;
     #endregion
 
     private readonly Dictionary<int, List<MapSpace>> _allDoorways;
@@ -39,7 +39,7 @@ public class MapLevel {
 
             this.MapRegions = new List<MapRegion>();
 
-            // Can probably change to region objects instead of ints
+            // refactor to hold doorways within rooms and the maplevel?
             this._allDoorways = new Dictionary<int, List<MapSpace>>()
             {
                 { 1, new List<MapSpace>() },

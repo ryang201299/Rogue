@@ -40,15 +40,17 @@ public abstract class CommonData {
     // Needs refactoring, I don't want to use magic numbers here. Calculate them from map height and width
     public static readonly Dictionary<int, List<int>> RegionBoundaries = new Dictionary<int, List<int>>
     {
-        { 1, new List<int> { 10, 22,  1,  1 }},
-        { 2, new List<int> { 10, 45,  1, 24 }},
-        { 3, new List<int> { 10, 68,  1, 47 }},
-        { 4, new List<int> { 21, 22, 12,  1 }},
-        { 5, new List<int> { 21, 45, 12, 24 }},
-        { 6, new List<int> { 21, 68, 12, 47 }},
-        { 7, new List<int> { 32, 22, 23,  1 }},
-        { 8, new List<int> { 32, 45, 23, 24 }},
-        { 9, new List<int> { 32, 68, 23, 47 }},
+        { 1, new List<int> {  8,  15,   1,   1 }},  // row=0, col=0
+        { 2, new List<int> {  8,  31,   1,  17 }},  // row=0, col=1
+        { 3, new List<int> {  8,  47,   1,  33 }},  // row=0, col=2
+
+        { 4, new List<int> { 17,  15,  10,   1 }},  // row=1, col=0
+        { 5, new List<int> { 17,  31,  10,  17 }},  // row=1, col=1
+        { 6, new List<int> { 17,  47,  10,  33 }},  // row=1, col=2
+
+        { 7, new List<int> { 26,  15,  19,   1 }},  // row=2, col=0
+        { 8, new List<int> { 26,  31,  19,  17 }},  // row=2, col=1
+        { 9, new List<int> { 26,  47,  19,  33 }}   // row=2, col=2
     };
 
     public static readonly Dictionary<string, short> ItemValues = new Dictionary<string, short> {
