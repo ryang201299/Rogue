@@ -14,20 +14,21 @@ namespace RogueProject
 
         private Dictionary<char, Rectangle> tileMap = new()
         {
-            { CommonData.MapCharacters["Gold"], new Rectangle(0, 0, 16, 16) },
-            { CommonData.MapCharacters["Player"], new Rectangle(16, 0, 16, 16) },
-            { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 32, 16, 16) },
-            { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(32, 48, 16, 16) },
-            { CommonData.MapCharacters["CornerNorthEast"], new Rectangle(16, 32, 16, 16) },
-            { CommonData.MapCharacters["CornerSouthWest"], new Rectangle(48, 48, 16, 16) },
-            { CommonData.MapCharacters["RoomFloor"], new Rectangle(32, 16, 16, 16) },
-            { CommonData.MapCharacters["RoomDoor"], new Rectangle(48, 16, 16, 16) },
-            { CommonData.MapCharacters["Empty"], new Rectangle(0, 32, 16, 16) },
-            { CommonData.MapCharacters["Stairway"], new Rectangle(16, 16, 16, 16) },
-            { CommonData.MapCharacters["Hallway"], new Rectangle(16, 16, 16, 16) },
-            { CommonData.MapCharacters["Vertical"], new Rectangle(48, 32, 16, 16) },
-            { CommonData.MapCharacters["Amulet"], new Rectangle(32, 0, 16, 16) },
-            { CommonData.MapCharacters["Horizontal"], new Rectangle(16, 48, 16, 16) },
+            { CommonData.MapCharacters["CornerNorthEast"], new Rectangle(0, 96, 32, 32) },
+            { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 96, 32, 32) },
+            // { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 0, 16, 16) },
+            // { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(48, 0, 16, 16) },
+            { CommonData.MapCharacters["Vertical"], new Rectangle(0, 64, 32, 32) },
+            // { CommonData.MapCharacters["RoomDoor"], new Rectangle(16, 16, 16, 16) },
+            { CommonData.MapCharacters["Hallway"], new Rectangle(64, 32, 32, 32) },
+            { CommonData.MapCharacters["Gold"], new Rectangle(96, 64, 32, 32) },
+            { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(0, 32, 32, 32) },
+            { CommonData.MapCharacters["CornerSouthWest"], new Rectangle(32, 32, 32, 32) },
+            { CommonData.MapCharacters["RoomFloor"], new Rectangle(64, 32, 32, 32) },
+            { CommonData.MapCharacters["Empty"], new Rectangle(96, 32, 32, 32) },
+            { CommonData.MapCharacters["Player"], new Rectangle(0, 0, 32, 32) },
+            { CommonData.MapCharacters["RoomDoor"], new Rectangle(32, 0, 32, 32) },
+            { CommonData.MapCharacters["Horizontal"], new Rectangle(96, 0, 32, 32) }
         };
 
         /// <summary>
