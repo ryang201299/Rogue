@@ -1,21 +1,9 @@
-Light design
-- Real game
-    - Rooms light up in full as though a switch was flicked as soon as you enter them
-    - Random chance a room will not light up. The walls will still light up. Player walks through the room with a "torch". Resembled by the
-      floor spaces being set to empty characters.
-    - Coridors light up gradually like a torch, but do not turn dark once the player has walked through them.
+     latest notes
+      - next step NEEDS to be rewriting the magic numbers for map and region height, and the boundaries. They're ridiculous.
+        need to be calculated based off of one value if psosible i.e. the value in level map, not the map height, as that's the index for iterating, not the actual height.
+        and also need to separate out region boundaries itno a more readadble method, it's impossible to interupt what values should be atm.
 
-- My game
-    - Same idea with rooms
-    - Not sure what to do about coridors. Could copy the real game, I could make them turn dark as you walk through, like a real torch, 
-      or I could make them switch on like a room, or I could even make some switch on, and some have a torch.
-    - Maybe the long ones are a torch, and the short ones just light up?
-    
-    - With these in mind, I think the torch should do one square distance in all directions
+        region boundaries need to be changed. Walls at the bottom of the screen are being cut off.
 
-
-    - Random cool thought, some levels should be completely dark...no light up rooms, everything is done with a torch
-
-    - Quick though on how to know which squares to make invisible after the torch has walked past them...keep a list of coords that have been
-      lit up, and every time the torch method is called to light up squares, set all squares currently in the list to be invisible, and then 
-      remove them from the list.
+        LATEST LATEST notes...lol
+        - torch now works. I'd prefer it if hallways were discovered with a gradient too.
