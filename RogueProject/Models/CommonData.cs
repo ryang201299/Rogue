@@ -34,7 +34,7 @@ public abstract class CommonData {
         { "RoomCreation", 90 },
         { "DoorwayCreation", 90 },
         { "GoldGeneration", 65 },
-        { "RoomIsDark", 50 }
+        { "RoomIsDark", 10 }
     };
 
     // Needs refactoring, I don't want to use magic numbers here. Calculate them from map height and width

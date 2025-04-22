@@ -252,8 +252,10 @@ namespace RogueProject
             int height    = panelMap.Height;
             int torchX    = currentGame.CurrentPlayer.Location.X * tileSize + tileSize / 2;
             int torchY    = currentGame.CurrentPlayer.Location.Y * tileSize + tileSize / 2;
-            int radius    = tileSize * 3;
-            byte maxAlpha = 215; // darkness at room edge
+            int radius    = tileSize * 2;
+            byte lightAlpha = 75;
+            byte darkAlpha = 125;
+            byte reallyDarkAlpha = 220;
 
             // 1) Create a 32bpp ARGB mask
             using (var mask = new Bitmap(width, height, PixelFormat.Format32bppArgb))
@@ -274,16 +276,28 @@ namespace RogueProject
                     for (int x = 0; x < width; x++)
                     {
                         int mapX = x / tileSize;
+                        bool isLightRoom = false;
                         bool isDarkSpace = false;
+                        bool isReallyDarkSpace = false;
 
                         // check bounds + room darkness flag
                         if ( mapX >= 0 && mapX < levelMap.GetLength(0)
                         && mapY >= 0 && mapY < levelMap.GetLength(1)
-                        && ((levelMap[mapX, mapY].MapRoom != null && levelMap[mapX, mapY].MapRoom.IsDark)
-                        || levelMap[mapX, mapY].MapCharacter == CommonData.MapCharacters["Hallway"])
-                        )
+                        && (levelMap[mapX, mapY].MapRoom != null && levelMap[mapX, mapY].MapRoom.IsDark))
+                        {
+                            isReallyDarkSpace = true;
+                        }
+                        else if (mapX >= 0 && mapX < levelMap.GetLength(0)
+                        && mapY >= 0 && mapY < levelMap.GetLength(1)
+                        && levelMap[mapX, mapY].MapCharacter == CommonData.MapCharacters["Hallway"])
                         {
                             isDarkSpace = true;
+                        }
+                        if ( mapX >= 0 && mapX < levelMap.GetLength(0)
+                        && mapY >= 0 && mapY < levelMap.GetLength(1)
+                        && (levelMap[mapX, mapY].MapRoom != null && !levelMap[mapX, mapY].MapRoom.IsDark))
+                        {
+                            isLightRoom = true;
                         }
 
                         byte alpha = 0;
@@ -296,7 +310,27 @@ namespace RogueProject
                             double t    = dist / radius;
                             if (t < 0) t = 0;
                             if (t > 1) t = 1;
-                            alpha = (byte)(t * maxAlpha);
+                            alpha = (byte)(t * darkAlpha);
+                        }
+
+                        if (isReallyDarkSpace) {
+                            double dx   = x - torchX;
+                            double dy   = y - torchY;
+                            double dist = Math.Sqrt(dx * dx + dy * dy);
+                            double t    = dist / radius;
+                            if (t < 0) t = 0;
+                            if (t > 1) t = 1;
+                            alpha = (byte)(t * reallyDarkAlpha);
+                        }
+
+                        if (isLightRoom) {
+                            double dx   = x - torchX;
+                            double dy   = y - torchY;
+                            double dist = Math.Sqrt(dx * dx + dy * dy);
+                            double t    = dist / radius;
+                            if (t < 0) t = 0;
+                            if (t > 1) t = 1;
+                            alpha = (byte)(t * lightAlpha);
                         }
 
                         int idx = row + x * 4;
