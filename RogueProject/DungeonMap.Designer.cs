@@ -279,8 +279,9 @@ namespace RogueProject
                         // check bounds + room darkness flag
                         if ( mapX >= 0 && mapX < levelMap.GetLength(0)
                         && mapY >= 0 && mapY < levelMap.GetLength(1)
-                        && levelMap[mapX, mapY].MapRoom != null
-                        && levelMap[mapX, mapY].MapRoom.IsDark )
+                        && ((levelMap[mapX, mapY].MapRoom != null && levelMap[mapX, mapY].MapRoom.IsDark)
+                        || levelMap[mapX, mapY].MapCharacter == CommonData.MapCharacters["Hallway"])
+                        )
                         {
                             isDarkSpace = true;
                         }
