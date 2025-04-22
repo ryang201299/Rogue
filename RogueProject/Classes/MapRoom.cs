@@ -133,12 +133,12 @@ public class MapRoom {
     public void MakeRoomVisible() {
         foreach (MapSpace space in MapSpaces) {
             // Rewrite this, because it's unnecessarily setting space to invisible, when they're invisible by default
-            if (IsDark && space.MapCharacter == CommonData.MapCharacters["RoomFloor"]) {
-                space.Visible = false;
-            }
-            else {
+            // if (IsDark && space.MapCharacter == CommonData.MapCharacters["RoomFloor"]) {
+            //     space.Visible = false;
+            // }
+            // else {
                 space.Visible = true;
-            }
+            // }
         }
 
         this.Visited = true;

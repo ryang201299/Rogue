@@ -191,10 +191,10 @@ public class Game
                         spaceToMakeVisible.Visible = true;
                     }
                     
-                    // Add to list of spaces that will be made invisible once the player walks away
-                    if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"] && spaceToMakeVisible.MapRoom.IsDark) {
-                        LitSpaces.Add(spaceToMakeVisible);
-                    }
+                    // // Add to list of spaces that will be made invisible once the player walks away
+                    // if (spaceToMakeVisible.MapCharacter == CommonData.MapCharacters["RoomFloor"] && spaceToMakeVisible.MapRoom.IsDark) {
+                    //     LitSpaces.Add(spaceToMakeVisible);
+                    // }
                 }
             }
         }

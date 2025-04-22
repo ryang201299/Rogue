@@ -1,5 +1,10 @@
 ﻿using RogueProject.Models;
 using RogueProject;
+using System.Drawing.Drawing2D;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
 
 namespace RogueProject
 {
@@ -185,6 +190,15 @@ namespace RogueProject
 
         private void panelMap_Paint(object sender, PaintEventArgs e)
         {
+            int result = DrawTiles(e);
+
+            if (result == 0) return; // No tiles to draw
+
+            ApplyLightingOverlay(e.Graphics);
+        }
+
+        private int DrawTiles(PaintEventArgs e) 
+        {
             int tileSize = 32;
 
             if (levelMap != null)
@@ -223,8 +237,82 @@ namespace RogueProject
                     }
                 }
             }
+            else 
+            {
+                return 0;
+            }
 
+            return 1;
         }
 
+        private void ApplyLightingOverlay(Graphics g)
+        {
+            int tileSize  = 32;
+            int width     = panelMap.Width;
+            int height    = panelMap.Height;
+            int torchX    = currentGame.CurrentPlayer.Location.X * tileSize + tileSize / 2;
+            int torchY    = currentGame.CurrentPlayer.Location.Y * tileSize + tileSize / 2;
+            int radius    = tileSize * 3;
+            byte maxAlpha = 215; // darkness at room edge
+
+            // 1) Create a 32bpp ARGB mask
+            using (var mask = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+            using (var dg   = Graphics.FromImage(mask))
+            {
+                var rect = new Rectangle(0, 0, width, height);
+                var bd   = mask.LockBits(rect, ImageLockMode.WriteOnly, mask.PixelFormat);
+                int stride   = bd.Stride;
+                int byteCount = Math.Abs(stride) * height;
+                var buffer   = new byte[byteCount];
+
+                // 2) Fill per‐pixel based on room darkness + torch gradient
+                for (int y = 0; y < height; y++)
+                {
+                    int row    = y * stride;
+                    int mapY   = y / tileSize;
+
+                    for (int x = 0; x < width; x++)
+                    {
+                        int mapX = x / tileSize;
+                        bool isDarkSpace = false;
+
+                        // check bounds + room darkness flag
+                        if ( mapX >= 0 && mapX < levelMap.GetLength(0)
+                        && mapY >= 0 && mapY < levelMap.GetLength(1)
+                        && levelMap[mapX, mapY].MapRoom != null
+                        && levelMap[mapX, mapY].MapRoom.IsDark )
+                        {
+                            isDarkSpace = true;
+                        }
+
+                        byte alpha = 0;
+                        if (isDarkSpace)
+                        {
+                            // distance‐based alpha: transparent at torch center → maxAlpha at radius
+                            double dx   = x - torchX;
+                            double dy   = y - torchY;
+                            double dist = Math.Sqrt(dx * dx + dy * dy);
+                            double t    = dist / radius;
+                            if (t < 0) t = 0;
+                            if (t > 1) t = 1;
+                            alpha = (byte)(t * maxAlpha);
+                        }
+
+                        int idx = row + x * 4;
+                        buffer[idx + 0] = 0;      // B
+                        buffer[idx + 1] = 0;      // G
+                        buffer[idx + 2] = 0;      // R
+                        buffer[idx + 3] = alpha;  // A
+                    }
+                }
+
+                // 3) Copy back and unlock
+                System.Runtime.InteropServices.Marshal.Copy(buffer, 0, bd.Scan0, byteCount);
+                mask.UnlockBits(bd);
+
+                // 4) Blit over the scene
+                g.DrawImage(mask, 0, 0);
+            }
+        }
     }
 }
