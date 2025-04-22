@@ -197,6 +197,7 @@ namespace RogueProject
             ApplyLightingOverlay(e.Graphics);
         }
 
+        // Needs refactoring.
         private int DrawTiles(PaintEventArgs e) 
         {
             int tileSize = 32;
@@ -210,14 +211,14 @@ namespace RogueProject
                         // Get the character representing this tile
                         char symbol = levelMap[x, y].MapCharacter;
 
-                        if (levelMap[x, y].DisplayCharacter != null) 
-                        {
-                            symbol = (char)levelMap[x, y].DisplayCharacter;
-                        }
-
                         if (levelMap[x, y].ItemCharacter != null)
                         {
                             symbol = (char)levelMap[x, y].ItemCharacter;
+                        }
+
+                        if (levelMap[x, y].DisplayCharacter != null) 
+                        {
+                            symbol = (char)levelMap[x, y].DisplayCharacter;
                         }
 
                         if (!levelMap[x, y].Visible)
