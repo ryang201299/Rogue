@@ -59,12 +59,12 @@ namespace RogueProject
         {
             lblStatus = new Label();
             btnStart = new Button();
-            lblArray = new Label();
             PlayerNamePanel = new Panel();
             label1 = new Label();
             PlayerNameBox = new TextBox();
             lblStats = new Label();
             panelMap = new Panel();
+            tableLayoutPanel1 = new TableLayoutPanel();
             PlayerNamePanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -73,7 +73,7 @@ namespace RogueProject
             lblStatus.AutoSize = true;
             lblStatus.Location = new Point(16, 21);
             lblStatus.Name = "lblStatus";
-            lblStatus.Size = new Size(220, 28);
+            lblStatus.Size = new Size(170, 22);
             lblStatus.TabIndex = 0;
             lblStatus.Text = "Welcome to Rogue";
             // 
@@ -90,19 +90,10 @@ namespace RogueProject
             btnStart.UseVisualStyleBackColor = false;
             btnStart.Click += btnNext_Click;
             // 
-            // lblArray
-            // 
-            lblArray.Dock = DockStyle.Fill;
-            lblArray.Location = new Point(0, 0);
-            lblArray.Name = "lblArray";
-            lblArray.Size = new Size(1702, 1033);
-            lblArray.TabIndex = 4;
-            lblArray.TextAlign = ContentAlignment.TopCenter;
-            lblArray.Click += lblArray_Click;
-            // 
             // PlayerNamePanel
             // 
             PlayerNamePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            PlayerNamePanel.Controls.Add(tableLayoutPanel1);
             PlayerNamePanel.Controls.Add(label1);
             PlayerNamePanel.Controls.Add(PlayerNameBox);
             PlayerNamePanel.Controls.Add(btnStart);
@@ -110,6 +101,7 @@ namespace RogueProject
             PlayerNamePanel.Name = "PlayerNamePanel";
             PlayerNamePanel.Size = new Size(1486, 471);
             PlayerNamePanel.TabIndex = 5;
+            PlayerNamePanel.Paint += PlayerNamePanel_Paint;
             // 
             // label1
             // 
@@ -117,7 +109,7 @@ namespace RogueProject
             label1.AutoSize = true;
             label1.Location = new Point(366, 222);
             label1.Name = "label1";
-            label1.Size = new Size(350, 28);
+            label1.Size = new Size(270, 22);
             label1.TabIndex = 3;
             label1.Text = "What is your rogue's name?";
             // 
@@ -129,7 +121,7 @@ namespace RogueProject
             PlayerNameBox.ForeColor = SystemColors.Window;
             PlayerNameBox.Location = new Point(716, 222);
             PlayerNameBox.Name = "PlayerNameBox";
-            PlayerNameBox.Size = new Size(283, 35);
+            PlayerNameBox.Size = new Size(283, 29);
             PlayerNameBox.TabIndex = 0;
             // 
             // lblStats
@@ -138,29 +130,45 @@ namespace RogueProject
             lblStats.AutoSize = true;
             lblStats.Location = new Point(29, 961);
             lblStats.Name = "lblStats";
-            lblStats.Size = new Size(0, 28);
+            lblStats.Size = new Size(0, 22);
             lblStats.TabIndex = 6;
             // 
             // panelMap
             // 
             panelMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            panelMap.Location = new Point(29, 52);
+            panelMap.Location = new Point(29, 79);
             panelMap.Name = "panelMap";
-            panelMap.Size = new Size(1644, 848);
+            panelMap.Size = new Size(1644, 821);
             panelMap.TabIndex = 7;
             panelMap.Paint += panelMap_Paint;
             // 
+            // tableLayoutPanel1
+            // 
+            tableLayoutPanel1.ColumnCount = 4;
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 50F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 133F));
+            tableLayoutPanel1.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute, 130F));
+            tableLayoutPanel1.Location = new Point(299, 21);
+            tableLayoutPanel1.Name = "tableLayoutPanel1";
+            tableLayoutPanel1.RowCount = 4;
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 42.6160355F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Percent, 57.3839645F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 111F));
+            tableLayoutPanel1.RowStyles.Add(new RowStyle(SizeType.Absolute, 58F));
+            tableLayoutPanel1.Size = new Size(501, 407);
+            tableLayoutPanel1.TabIndex = 4;
+            // 
             // DungeonMain
             // 
-            AutoScaleDimensions = new SizeF(13F, 27F);
+            AutoScaleDimensions = new SizeF(10F, 22F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(1702, 1033);
+            ClientSize = new Size(1540, 1005);
             Controls.Add(PlayerNamePanel);
             Controls.Add(panelMap);
             Controls.Add(lblStats);
             Controls.Add(lblStatus);
-            Controls.Add(lblArray);
             Font = new Font("Consolas", 14F, FontStyle.Bold);
             ForeColor = Color.FromArgb(255, 128, 0);
             KeyPreview = true;
@@ -181,7 +189,6 @@ namespace RogueProject
 
         private Label lblStatus;
         private Button btnStart;
-        private Label lblArray;
         private Panel PlayerNamePanel;
         private TextBox PlayerNameBox;
         private Label label1;
@@ -341,5 +348,7 @@ namespace RogueProject
                 g.DrawImage(mask, 0, 0);
             }
         }
+
+        private TableLayoutPanel tableLayoutPanel1;
     }
 }

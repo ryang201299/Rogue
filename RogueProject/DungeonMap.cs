@@ -26,11 +26,6 @@ namespace RogueProject
 
         }
 
-        private void lblArray_Click(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnNext_Click(object sender, EventArgs e)
         {
             if (PlayerNameBox.TextLength > 0)
@@ -38,7 +33,6 @@ namespace RogueProject
                 currentGame = new Game(PlayerNameBox.Text);
                 levelMap = currentGame.CurrentMap.LevelMap;
                 PlayerNamePanel.Visible = false;
-                lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
                 lblStats.Text = currentGame.Stats;
                 panelMap.Invalidate();
@@ -63,7 +57,6 @@ namespace RogueProject
             {
                 currentGame.KeyHandler(e.KeyValue, e.Shift);
                 levelMap = currentGame.CurrentMap.LevelMap;
-                lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
                 lblStats.Text = currentGame.Stats;
 
@@ -74,6 +67,11 @@ namespace RogueProject
         private void DungeonMain_KeyPress(object sender, KeyPressEventArgs e)
         {
             Debug.WriteLine("Key Press - " + e.KeyChar);
+        }
+
+        private void PlayerNamePanel_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
