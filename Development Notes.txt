@@ -55,3 +55,7 @@ Things to do
 
 - Half way point of game uses different coloured tilesheet i.e. purple? Pretty cool
   - Can introduce certain monsters at this point
+
+- Implement turn based
+  - enemies move each turn, hunger depletes, enemies might respawn, etc.
+  - Every interaction costs 1 turn, walking, trading, opening a chest, except for skipping dialogue, that's just reading.
