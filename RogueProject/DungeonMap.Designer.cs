@@ -201,8 +201,8 @@ namespace RogueProject
         // Needs refactoring.
         private int DrawTiles(PaintEventArgs e)
         {
-            const int tileSize = 32;
-            const int viewRadius = 5;
+            const int tileSize = 64;
+            const int viewRadius = 64;
 
             if (levelMap == null) return 0;
 
@@ -252,15 +252,13 @@ namespace RogueProject
 
         private void ApplyLightingOverlay(Graphics g)
         {
-            const int tileSize       = 32;
-            const int viewRadius     = 5;
-            const int torchRadius    = 2;                // your original torch size
+            const int tileSize       = 64;    // must match your DrawTiles
+            const int torchRadius    = 2;     // in tiles
             const int gradientRadius = torchRadius * tileSize;
 
+            // 1) Player/world offsets (same as DrawTiles)
             int px = currentGame.CurrentPlayer.Location.X;
             int py = currentGame.CurrentPlayer.Location.Y;
-
-            // Compute the same offset as DrawTiles
             int centerX = panelMap.Width  / 2;
             int centerY = panelMap.Height / 2;
             int worldX  = px * tileSize + tileSize/2;
@@ -268,7 +266,7 @@ namespace RogueProject
             int offsetX = centerX - worldX;
             int offsetY = centerY - worldY;
 
-            // Torch center in screen coords
+            // torch in SCREEN coords
             int torchX = worldX + offsetX;
             int torchY = worldY + offsetY;
 
@@ -290,12 +288,15 @@ namespace RogueProject
 
                 for (int y = 0; y < height; y++)
                 {
-                    int row  = y * stride;
-                    int mapY = y / tileSize;
-
+                    int row = y * stride;
                     for (int x = 0; x < width; x++)
                     {
-                        int mapX = x / tileSize;
+                        // 2) Convert screen → world pixel, then to map cell
+                        int worldPixelX = x - offsetX;
+                        int worldPixelY = y - offsetY;
+                        int mapX = worldPixelX / tileSize;
+                        int mapY = worldPixelY / tileSize;
+
                         bool isLightRoom       = false;
                         bool isDarkSpace       = false;
                         bool isReallyDarkSpace = false;
@@ -305,12 +306,8 @@ namespace RogueProject
                         {
                             var cell = levelMap[mapX, mapY];
 
-                            // **New**: everything not currently visible is pitch-dark
-                            if (!cell.Visible)
-                            {
-                                isReallyDarkSpace = true;
-                            }
-                            else if (cell.MapRoom != null)
+                            // 3-tier classification
+                            if (cell.MapRoom != null)
                             {
                                 if (cell.MapRoom.IsDark)
                                     isReallyDarkSpace = true;
@@ -324,11 +321,11 @@ namespace RogueProject
                         }
                         else
                         {
-                            // off‐map just in case: treat as pitch‐dark
+                            // off-map = darkest
                             isReallyDarkSpace = true;
                         }
 
-                        // distance‐based falloff from torch
+                        // 3) Distance falloff from the torch center
                         double dx   = x - torchX;
                         double dy   = y - torchY;
                         double dist = Math.Sqrt(dx*dx + dy*dy);
@@ -339,6 +336,7 @@ namespace RogueProject
                         else if (isDarkSpace)   alpha = (byte)(t * darkAlpha);
                         else if (isLightRoom)   alpha = (byte)(t * lightAlpha);
 
+                        // 4) Write ARGB
                         int idx = row + x * 4;
                         buffer[idx + 0] = 0;    // B
                         buffer[idx + 1] = 0;    // G
@@ -347,12 +345,13 @@ namespace RogueProject
                     }
                 }
 
-                Marshal.Copy(buffer, 0, bd.Scan0, byteCount);
+                // 5) Push mask into the bitmap and draw it
+                System.Runtime.InteropServices.Marshal.Copy(buffer, 0, bd.Scan0, byteCount);
                 mask.UnlockBits(bd);
-
-                // Overlay it
                 g.DrawImage(mask, 0, 0);
             }
         }
+
+
     }
 }
