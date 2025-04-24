@@ -302,35 +302,26 @@ namespace RogueProject
                         }
 
                         byte alpha = 0;
+
+                        double dx   = x - torchX;
+                        double dy   = y - torchY;
+                        double dist = Math.Sqrt(dx * dx + dy * dy);
+                        double t    = dist / radius;
+                        if (t < 0) t = 0;
+                        if (t > 1) t = 1;
+
                         if (isDarkSpace)
                         {
                             // distance‐based alpha: transparent at torch center → maxAlpha at radius
-                            double dx   = x - torchX;
-                            double dy   = y - torchY;
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            double t    = dist / radius;
-                            if (t < 0) t = 0;
-                            if (t > 1) t = 1;
                             alpha = (byte)(t * darkAlpha);
                         }
 
-                        if (isReallyDarkSpace) {
-                            double dx   = x - torchX;
-                            double dy   = y - torchY;
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            double t    = dist / radius;
-                            if (t < 0) t = 0;
-                            if (t > 1) t = 1;
+                        else if (isReallyDarkSpace) {
                             alpha = (byte)(t * reallyDarkAlpha);
                         }
 
-                        if (isLightRoom) {
-                            double dx   = x - torchX;
-                            double dy   = y - torchY;
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            double t    = dist / radius;
-                            if (t < 0) t = 0;
-                            if (t > 1) t = 1;
+                        else if (isLightRoom) {
+                            
                             alpha = (byte)(t * lightAlpha);
                         }
 
