@@ -1,28 +1,61 @@
-Create region, and room classes
+     latest notes
+      - next step NEEDS to be rewriting the magic numbers for map and region height, and the boundaries. They're ridiculous.
+        need to be calculated based off of one value if psosible i.e. the value in level map, not the map height, as that's the index for iterating, not the actual height.
+        and also need to separate out region boundaries itno a more readadble method, it's impossible to interupt what values should be atm.
 
-Change MapLevel constructor to instead of just assigning characters to
-a region, track what region it is in, and create a new object and 
-populate that objects squares instead
+        region boundaries need to be changed. Walls at the bottom of the screen are being cut off.
 
-Change torch function to instead on each character move make all squares
-in players range visible, have a trigger on the mapspace class that has a
-a flag "player entered room" or something, and if that flag is true, the torch
-method is called for that entire room.
+        LATEST LATEST notes...lol
+        - torch now works. I'd prefer it if hallways were discovered with a gradient too.
 
-Research c# events and subscribers to track when a user enters a room 
-i.e. steps on a doorway/steps on an interior floor that isn't visible.
+Things to do
+- Characters
+  - Enemies
+    - goblin
+    - snakes
+    - wizard?
+    - bat?
+  - Friendlies
+    - Someone who gives the player a hint, or you can ask questions to
+    - A trader, who you can trade gold for weapons and potions
 
-Also refactor the astar method to use a GetSpace method, that accesses
-the mapspace details for the given coords, since the region object
-won't have those details.
+- Save game
+  - Autosave
+  - Save on death
+  - Pause menu
+    - Not sure what else this would display
 
-In terms of tracking the layout of the level, since I won't be using
-levelMap anymore, the something list containing the levels would now
-need to contain a list of level objects, which contains a list of region
-objects, which contains a room object.
+- Potions
+  - dependent on inventory
+  - Instant
+    - Health
+  - Time based
+    - Strength
+    - Light (dark rooms are lit up) / Could also last one level, so goes away when you leave the current level
+  - 
 
-The spaces surrounding player code can be completely removed following 
-this too.
+- scrolls
+- High scores
+- Scoring in general
+  - Gold
+  - Points per action
+    - Killing enemy
+    - Descending another level
 
-The initial torch method would now need to make the entire first region
-visible instead of the spaces around the player.
+- Option to display OG layout vs new layout?
+
+- Different sprite for holding a sword vs bow
+
+- Item pickups
+  - Potions
+  - weapons
+
+- Upgrade system
+  - Lots of kills will upgrade all weapons and armour
+
+- Half way point of game uses different coloured tilesheet i.e. purple? Pretty cool
+  - Can introduce certain monsters at this point
+
+- Implement turn based
+  - enemies move each turn, hunger depletes, enemies might respawn, etc.
+  - Every interaction costs 1 turn, walking, trading, opening a chest, except for skipping dialogue, that's just reading.

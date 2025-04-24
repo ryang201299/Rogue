@@ -2,14 +2,13 @@
 
 namespace RogueProject
 {
-    internal class Player
+    public class Player
     {
         private const int STARTING_HP = 12;
         private const int STARTING_STRENGTH = 16;
         public const int MAX_FOODVALUE = 1700;
         public const int MIN_FOODVALUE = 900;
         private const int HUNGER_TURNS = 150;
-        public const char CHARACTER = '☺';
 
         public enum HungerLevel
         {
@@ -42,8 +41,7 @@ namespace RogueProject
             this.Gold = 0;
             this.Experience = 1;
             this.HungerState = HungerLevel.Satisfied;
-            this.HungerTurn =
-                 rand.Next(MIN_FOODVALUE, MAX_FOODVALUE + 1);
+            this.HungerTurn = rand.Next(MIN_FOODVALUE, MAX_FOODVALUE + 1);
         }
     }
 }

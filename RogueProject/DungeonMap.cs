@@ -1,15 +1,24 @@
 using System.Diagnostics;
-using System.Xml.Linq;
 
 namespace RogueProject
 {
     public partial class DungeonMain : Form
     {
         private Game? currentGame;
+        private MapSpace[,]? levelMap;
 
         public DungeonMain()
         {
             InitializeComponent();
+
+            tileSet = new Bitmap("Tilesheet/test-tilesheet.png"); // Make sure this path is correct
+
+            // Conditionally remove this when changing levels, so the new level has a wiping animation? 
+            // There will be a better way to do this though I'm sure
+            typeof(Panel).InvokeMember("DoubleBuffered",
+                System.Reflection.BindingFlags.SetProperty | System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic,
+                null, panelMap, new object[] { true });
+
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -27,10 +36,12 @@ namespace RogueProject
             if (PlayerNameBox.TextLength > 0)
             {
                 currentGame = new Game(PlayerNameBox.Text);
+                levelMap = currentGame.CurrentMap.LevelMap;
                 PlayerNamePanel.Visible = false;
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
                 lblStats.Text = currentGame.Stats;
+                panelMap.Invalidate();
             }
             else
             {
@@ -43,6 +54,7 @@ namespace RogueProject
             Debug.WriteLine("Key Up - " + e.KeyValue);
         }
 
+        // Means pressing any key down - does not mean pressing the down arrow key 
         private void DungeonMain_KeyDown(object sender, KeyEventArgs e)
         {
             Debug.WriteLine("Key Down - " + e.KeyValue);
@@ -50,10 +62,12 @@ namespace RogueProject
             if (this.currentGame != null)
             {
                 currentGame.KeyHandler(e.KeyValue, e.Shift);
-
+                levelMap = currentGame.CurrentMap.LevelMap;
                 lblArray.Text = currentGame.CurrentMap.MapText();
                 lblStatus.Text = currentGame.StatusMessage;
                 lblStats.Text = currentGame.Stats;
+
+                panelMap.Invalidate();
             }
         }
 

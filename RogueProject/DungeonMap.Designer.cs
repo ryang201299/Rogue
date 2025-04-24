@@ -1,4 +1,12 @@
-﻿namespace RogueProject
+﻿using RogueProject.Models;
+using RogueProject;
+using System.Drawing.Drawing2D;
+using System;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Windows.Forms;
+
+namespace RogueProject
 {
     partial class DungeonMain
     {
@@ -6,6 +14,27 @@
         ///  Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+
+        private Bitmap tileSet;
+
+        private Dictionary<char, Rectangle> tileMap = new()
+        {
+            { CommonData.MapCharacters["CornerNorthEast"], new Rectangle(0, 96, 32, 32) },
+            { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 96, 32, 32) },
+            // { CommonData.MapCharacters["CornerNorthWest"], new Rectangle(32, 0, 16, 16) },
+            // { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(48, 0, 16, 16) },
+            { CommonData.MapCharacters["Vertical"], new Rectangle(0, 64, 32, 32) },
+            // { CommonData.MapCharacters["RoomDoor"], new Rectangle(16, 16, 16, 16) },
+            { CommonData.MapCharacters["Hallway"], new Rectangle(64, 32, 32, 32) },
+            { CommonData.MapCharacters["Gold"], new Rectangle(96, 64, 32, 32) },
+            { CommonData.MapCharacters["CornerSouthEast"], new Rectangle(0, 32, 32, 32) },
+            { CommonData.MapCharacters["CornerSouthWest"], new Rectangle(32, 32, 32, 32) },
+            { CommonData.MapCharacters["RoomFloor"], new Rectangle(64, 32, 32, 32) },
+            { CommonData.MapCharacters["Empty"], new Rectangle(96, 32, 32, 32) },
+            { CommonData.MapCharacters["Player"], new Rectangle(0, 0, 32, 32) },
+            { CommonData.MapCharacters["RoomDoor"], new Rectangle(32, 0, 32, 32) },
+            { CommonData.MapCharacters["Horizontal"], new Rectangle(96, 0, 32, 32) }
+        };
 
         /// <summary>
         ///  Clean up any resources being used.
@@ -35,6 +64,7 @@
             label1 = new Label();
             PlayerNameBox = new TextBox();
             lblStats = new Label();
+            panelMap = new Panel();
             PlayerNamePanel.SuspendLayout();
             SuspendLayout();
             // 
@@ -52,7 +82,7 @@
             btnStart.Anchor = AnchorStyles.None;
             btnStart.BackColor = Color.Black;
             btnStart.ForeColor = Color.FromArgb(255, 128, 0);
-            btnStart.Location = new Point(741, 89);
+            btnStart.Location = new Point(1005, 222);
             btnStart.Name = "btnStart";
             btnStart.Size = new Size(111, 33);
             btnStart.TabIndex = 2;
@@ -65,7 +95,7 @@
             lblArray.Dock = DockStyle.Fill;
             lblArray.Location = new Point(0, 0);
             lblArray.Name = "lblArray";
-            lblArray.Size = new Size(1175, 766);
+            lblArray.Size = new Size(1702, 1033);
             lblArray.TabIndex = 4;
             lblArray.TextAlign = ContentAlignment.TopCenter;
             lblArray.Click += lblArray_Click;
@@ -78,14 +108,14 @@
             PlayerNamePanel.Controls.Add(btnStart);
             PlayerNamePanel.Location = new Point(96, 198);
             PlayerNamePanel.Name = "PlayerNamePanel";
-            PlayerNamePanel.Size = new Size(959, 204);
+            PlayerNamePanel.Size = new Size(1486, 471);
             PlayerNamePanel.TabIndex = 5;
             // 
             // label1
             // 
             label1.Anchor = AnchorStyles.None;
             label1.AutoSize = true;
-            label1.Location = new Point(102, 89);
+            label1.Location = new Point(366, 222);
             label1.Name = "label1";
             label1.Size = new Size(350, 28);
             label1.TabIndex = 3;
@@ -97,7 +127,7 @@
             PlayerNameBox.BackColor = SystemColors.InfoText;
             PlayerNameBox.BorderStyle = BorderStyle.FixedSingle;
             PlayerNameBox.ForeColor = SystemColors.Window;
-            PlayerNameBox.Location = new Point(452, 89);
+            PlayerNameBox.Location = new Point(716, 222);
             PlayerNameBox.Name = "PlayerNameBox";
             PlayerNameBox.Size = new Size(283, 35);
             PlayerNameBox.TabIndex = 0;
@@ -106,19 +136,29 @@
             // 
             lblStats.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             lblStats.AutoSize = true;
-            lblStats.Location = new Point(29, 694);
+            lblStats.Location = new Point(29, 961);
             lblStats.Name = "lblStats";
             lblStats.Size = new Size(0, 28);
             lblStats.TabIndex = 6;
+            // 
+            // panelMap
+            // 
+            panelMap.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            panelMap.Location = new Point(29, 52);
+            panelMap.Name = "panelMap";
+            panelMap.Size = new Size(1644, 848);
+            panelMap.TabIndex = 7;
+            panelMap.Paint += panelMap_Paint;
             // 
             // DungeonMain
             // 
             AutoScaleDimensions = new SizeF(13F, 27F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
-            ClientSize = new Size(1175, 766);
-            Controls.Add(lblStats);
+            ClientSize = new Size(1702, 1033);
             Controls.Add(PlayerNamePanel);
+            Controls.Add(panelMap);
+            Controls.Add(lblStats);
             Controls.Add(lblStatus);
             Controls.Add(lblArray);
             Font = new Font("Consolas", 14F, FontStyle.Bold);
@@ -146,5 +186,160 @@
         private TextBox PlayerNameBox;
         private Label label1;
         private Label lblStats;
+        private Panel panelMap;
+
+        private void panelMap_Paint(object sender, PaintEventArgs e)
+        {
+            int result = DrawTiles(e);
+
+            if (result == 0) return; // No tiles to draw
+
+            ApplyLightingOverlay(e.Graphics);
+        }
+
+        // Needs refactoring.
+        private int DrawTiles(PaintEventArgs e) 
+        {
+            int tileSize = 32;
+
+            if (levelMap != null)
+            {
+                for (int x = 0; x < levelMap.GetLength(0); x++)
+                {
+                    for (int y = 0; y < levelMap.GetLength(1); y++)
+                    {
+                        // Get the character representing this tile
+                        char symbol = levelMap[x, y].MapCharacter;
+
+                        if (levelMap[x, y].ItemCharacter != null)
+                        {
+                            symbol = (char)levelMap[x, y].ItemCharacter;
+                        }
+
+                        if (levelMap[x, y].DisplayCharacter != null) 
+                        {
+                            symbol = (char)levelMap[x, y].DisplayCharacter;
+                        }
+
+                        if (!levelMap[x, y].Visible)
+                        {
+                            symbol = CommonData.MapCharacters["Empty"];
+                        }
+
+                        // Try to get the matching tile rectangle
+                        if (tileMap.TryGetValue(symbol, out var srcRect))
+                        {
+                            // Destination on the screen
+                            Rectangle destRect = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
+
+                            // Draw the part of the tileSet image for this tile
+                            e.Graphics.DrawImage(tileSet, destRect, srcRect, GraphicsUnit.Pixel);
+                        }
+                    }
+                }
+            }
+            else 
+            {
+                return 0;
+            }
+
+            return 1;
+        }
+
+        private void ApplyLightingOverlay(Graphics g)
+        {
+            int tileSize  = 32;
+            int width     = panelMap.Width;
+            int height    = panelMap.Height;
+            int torchX    = currentGame.CurrentPlayer.Location.X * tileSize + tileSize / 2;
+            int torchY    = currentGame.CurrentPlayer.Location.Y * tileSize + tileSize / 2;
+            int radius    = tileSize * 2;
+            byte lightAlpha = 75;
+            byte darkAlpha = 150;
+            byte reallyDarkAlpha = 225;
+
+            // 1) Create a 32bpp ARGB mask
+            using (var mask = new Bitmap(width, height, PixelFormat.Format32bppArgb))
+            using (var dg   = Graphics.FromImage(mask))
+            {
+                var rect = new Rectangle(0, 0, width, height);
+                var bd   = mask.LockBits(rect, ImageLockMode.WriteOnly, mask.PixelFormat);
+                int stride   = bd.Stride;
+                int byteCount = Math.Abs(stride) * height;
+                var buffer   = new byte[byteCount];
+
+                // 2) Fill per‐pixel based on room darkness + torch gradient
+                for (int y = 0; y < height; y++)
+                {
+                    int row    = y * stride;
+                    int mapY   = y / tileSize;
+
+                    for (int x = 0; x < width; x++)
+                    {
+                        int mapX = x / tileSize;
+                        bool isLightRoom = false;
+                        bool isDarkSpace = false;
+                        bool isReallyDarkSpace = false;
+
+                        // check bounds + room darkness flag
+                        if ( mapX >= 0 && mapX < levelMap.GetLength(0)
+                        && mapY >= 0 && mapY < levelMap.GetLength(1)
+                        && (levelMap[mapX, mapY].MapRoom != null && levelMap[mapX, mapY].MapRoom.IsDark))
+                        {
+                            isReallyDarkSpace = true;
+                        }
+                        else if (mapX >= 0 && mapX < levelMap.GetLength(0)
+                        && mapY >= 0 && mapY < levelMap.GetLength(1)
+                        && levelMap[mapX, mapY].MapCharacter == CommonData.MapCharacters["Hallway"])
+                        {
+                            isDarkSpace = true;
+                        }
+                        if ( mapX >= 0 && mapX < levelMap.GetLength(0)
+                        && mapY >= 0 && mapY < levelMap.GetLength(1)
+                        && (levelMap[mapX, mapY].MapRoom != null && !levelMap[mapX, mapY].MapRoom.IsDark))
+                        {
+                            isLightRoom = true;
+                        }
+
+                        byte alpha = 0;
+
+                        double dx   = x - torchX;
+                        double dy   = y - torchY;
+                        double dist = Math.Sqrt(dx * dx + dy * dy);
+                        double t    = dist / radius;
+                        if (t < 0) t = 0;
+                        if (t > 1) t = 1;
+
+                        if (isDarkSpace)
+                        {
+                            // distance‐based alpha: transparent at torch center → maxAlpha at radius
+                            alpha = (byte)(t * darkAlpha);
+                        }
+
+                        else if (isReallyDarkSpace) {
+                            alpha = (byte)(t * reallyDarkAlpha);
+                        }
+
+                        else if (isLightRoom) {
+                            
+                            alpha = (byte)(t * lightAlpha);
+                        }
+
+                        int idx = row + x * 4;
+                        buffer[idx + 0] = 0;      // B
+                        buffer[idx + 1] = 0;      // G
+                        buffer[idx + 2] = 0;      // R
+                        buffer[idx + 3] = alpha;  // A
+                    }
+                }
+
+                // 3) Copy back and unlock
+                System.Runtime.InteropServices.Marshal.Copy(buffer, 0, bd.Scan0, byteCount);
+                mask.UnlockBits(bd);
+
+                // 4) Blit over the scene
+                g.DrawImage(mask, 0, 0);
+            }
+        }
     }
 }
