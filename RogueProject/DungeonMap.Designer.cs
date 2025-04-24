@@ -5,6 +5,7 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
+using System.Runtime.InteropServices;
 
 namespace RogueProject
 {
@@ -198,49 +199,52 @@ namespace RogueProject
         }
 
         // Needs refactoring.
-        private int DrawTiles(PaintEventArgs e) 
+        private int DrawTiles(PaintEventArgs e)
         {
-            int tileSize = 32;
+            const int tileSize = 32;
+            const int viewRadius = 5;
 
-            if (levelMap != null)
+            if (levelMap == null) return 0;
+
+            int mapW = levelMap.GetLength(0);
+            int mapH = levelMap.GetLength(1);
+            int px   = currentGame.CurrentPlayer.Location.X;
+            int py   = currentGame.CurrentPlayer.Location.Y;
+
+            // 1) Visible‐tile bounds
+            int minX = Math.Max(px - viewRadius, 0);
+            int maxX = Math.Min(px + viewRadius, mapW - 1);
+            int minY = Math.Max(py - viewRadius, 0);
+            int maxY = Math.Min(py + viewRadius, mapH - 1);
+
+            // 2) Pixel offset
+            int centerX = panelMap.Width  / 2;
+            int centerY = panelMap.Height / 2;
+            int worldX  = px * tileSize + tileSize/2;
+            int worldY  = py * tileSize + tileSize/2;
+            int offsetX = centerX - worldX;
+            int offsetY = centerY - worldY;
+
+            // 3) Draw
+            for (int x = minX; x <= maxX; x++)
             {
-                for (int x = 0; x < levelMap.GetLength(0); x++)
+                for (int y = minY; y <= maxY; y++)
                 {
-                    for (int y = 0; y < levelMap.GetLength(1); y++)
+                    char symbol = levelMap[x, y].MapCharacter;
+                    if (levelMap[x, y].ItemCharacter    != null) symbol = (char)levelMap[x, y].ItemCharacter;
+                    if (levelMap[x, y].DisplayCharacter != null) symbol = (char)levelMap[x, y].DisplayCharacter;
+                    if (!levelMap[x, y].Visible) symbol = CommonData.MapCharacters["Empty"];
+
+                    if (tileMap.TryGetValue(symbol, out var srcRect))
                     {
-                        // Get the character representing this tile
-                        char symbol = levelMap[x, y].MapCharacter;
-
-                        if (levelMap[x, y].ItemCharacter != null)
-                        {
-                            symbol = (char)levelMap[x, y].ItemCharacter;
-                        }
-
-                        if (levelMap[x, y].DisplayCharacter != null) 
-                        {
-                            symbol = (char)levelMap[x, y].DisplayCharacter;
-                        }
-
-                        if (!levelMap[x, y].Visible)
-                        {
-                            symbol = CommonData.MapCharacters["Empty"];
-                        }
-
-                        // Try to get the matching tile rectangle
-                        if (tileMap.TryGetValue(symbol, out var srcRect))
-                        {
-                            // Destination on the screen
-                            Rectangle destRect = new Rectangle(x * tileSize, y * tileSize, tileSize, tileSize);
-
-                            // Draw the part of the tileSet image for this tile
-                            e.Graphics.DrawImage(tileSet, destRect, srcRect, GraphicsUnit.Pixel);
-                        }
+                        var dest = new Rectangle(
+                            x * tileSize + offsetX,
+                            y * tileSize + offsetY,
+                            tileSize, tileSize
+                        );
+                        e.Graphics.DrawImage(tileSet, dest, srcRect, GraphicsUnit.Pixel);
                     }
                 }
-            }
-            else 
-            {
-                return 0;
             }
 
             return 1;
@@ -248,105 +252,105 @@ namespace RogueProject
 
         private void ApplyLightingOverlay(Graphics g)
         {
-            int tileSize  = 32;
-            int width     = panelMap.Width;
-            int height    = panelMap.Height;
-            int torchX    = currentGame.CurrentPlayer.Location.X * tileSize + tileSize / 2;
-            int torchY    = currentGame.CurrentPlayer.Location.Y * tileSize + tileSize / 2;
-            int radius    = tileSize * 2;
-            byte lightAlpha = 75;
-            byte darkAlpha = 150;
+            const int tileSize       = 32;
+            const int viewRadius     = 5;
+            const int torchRadius    = 2;                // your original torch size
+            const int gradientRadius = torchRadius * tileSize;
+
+            int px = currentGame.CurrentPlayer.Location.X;
+            int py = currentGame.CurrentPlayer.Location.Y;
+
+            // Compute the same offset as DrawTiles
+            int centerX = panelMap.Width  / 2;
+            int centerY = panelMap.Height / 2;
+            int worldX  = px * tileSize + tileSize/2;
+            int worldY  = py * tileSize + tileSize/2;
+            int offsetX = centerX - worldX;
+            int offsetY = centerY - worldY;
+
+            // Torch center in screen coords
+            int torchX = worldX + offsetX;
+            int torchY = worldY + offsetY;
+
+            byte lightAlpha      = 75;
+            byte darkAlpha       = 150;
             byte reallyDarkAlpha = 225;
 
-            // 1) Create a 32bpp ARGB mask
+            int width  = panelMap.Width;
+            int height = panelMap.Height;
+
             using (var mask = new Bitmap(width, height, PixelFormat.Format32bppArgb))
             using (var dg   = Graphics.FromImage(mask))
             {
-                var rect = new Rectangle(0, 0, width, height);
-                var bd   = mask.LockBits(rect, ImageLockMode.WriteOnly, mask.PixelFormat);
-                int stride   = bd.Stride;
+                var rect      = new Rectangle(0, 0, width, height);
+                var bd        = mask.LockBits(rect, ImageLockMode.WriteOnly, mask.PixelFormat);
+                int stride    = bd.Stride;
                 int byteCount = Math.Abs(stride) * height;
-                var buffer   = new byte[byteCount];
+                var buffer    = new byte[byteCount];
 
-                // 2) Fill per‐pixel based on room darkness + torch gradient
                 for (int y = 0; y < height; y++)
                 {
-                    int row    = y * stride;
-                    int mapY   = y / tileSize;
+                    int row  = y * stride;
+                    int mapY = y / tileSize;
 
                     for (int x = 0; x < width; x++)
                     {
                         int mapX = x / tileSize;
-                        bool isLightRoom = false;
-                        bool isDarkSpace = false;
+                        bool isLightRoom       = false;
+                        bool isDarkSpace       = false;
                         bool isReallyDarkSpace = false;
 
-                        // check bounds + room darkness flag
-                        if ( mapX >= 0 && mapX < levelMap.GetLength(0)
-                        && mapY >= 0 && mapY < levelMap.GetLength(1)
-                        && (levelMap[mapX, mapY].MapRoom != null && levelMap[mapX, mapY].MapRoom.IsDark))
+                        if (mapX >= 0 && mapX < levelMap.GetLength(0) &&
+                            mapY >= 0 && mapY < levelMap.GetLength(1))
                         {
+                            var cell = levelMap[mapX, mapY];
+
+                            // **New**: everything not currently visible is pitch-dark
+                            if (!cell.Visible)
+                            {
+                                isReallyDarkSpace = true;
+                            }
+                            else if (cell.MapRoom != null)
+                            {
+                                if (cell.MapRoom.IsDark)
+                                    isReallyDarkSpace = true;
+                                else
+                                    isLightRoom = true;
+                            }
+                            else if (cell.MapCharacter == CommonData.MapCharacters["Hallway"])
+                            {
+                                isDarkSpace = true;
+                            }
+                        }
+                        else
+                        {
+                            // off‐map just in case: treat as pitch‐dark
                             isReallyDarkSpace = true;
                         }
-                        else if (mapX >= 0 && mapX < levelMap.GetLength(0)
-                        && mapY >= 0 && mapY < levelMap.GetLength(1)
-                        && levelMap[mapX, mapY].MapCharacter == CommonData.MapCharacters["Hallway"])
-                        {
-                            isDarkSpace = true;
-                        }
-                        if ( mapX >= 0 && mapX < levelMap.GetLength(0)
-                        && mapY >= 0 && mapY < levelMap.GetLength(1)
-                        && (levelMap[mapX, mapY].MapRoom != null && !levelMap[mapX, mapY].MapRoom.IsDark))
-                        {
-                            isLightRoom = true;
-                        }
+
+                        // distance‐based falloff from torch
+                        double dx   = x - torchX;
+                        double dy   = y - torchY;
+                        double dist = Math.Sqrt(dx*dx + dy*dy);
+                        double t    = Math.Min(1.0, Math.Max(0.0, dist / gradientRadius));
 
                         byte alpha = 0;
-                        if (isDarkSpace)
-                        {
-                            // distance‐based alpha: transparent at torch center → maxAlpha at radius
-                            double dx   = x - torchX;
-                            double dy   = y - torchY;
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            double t    = dist / radius;
-                            if (t < 0) t = 0;
-                            if (t > 1) t = 1;
-                            alpha = (byte)(t * darkAlpha);
-                        }
-
-                        if (isReallyDarkSpace) {
-                            double dx   = x - torchX;
-                            double dy   = y - torchY;
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            double t    = dist / radius;
-                            if (t < 0) t = 0;
-                            if (t > 1) t = 1;
-                            alpha = (byte)(t * reallyDarkAlpha);
-                        }
-
-                        if (isLightRoom) {
-                            double dx   = x - torchX;
-                            double dy   = y - torchY;
-                            double dist = Math.Sqrt(dx * dx + dy * dy);
-                            double t    = dist / radius;
-                            if (t < 0) t = 0;
-                            if (t > 1) t = 1;
-                            alpha = (byte)(t * lightAlpha);
-                        }
+                        if (isReallyDarkSpace)  alpha = (byte)(t * reallyDarkAlpha);
+                        else if (isDarkSpace)   alpha = (byte)(t * darkAlpha);
+                        else if (isLightRoom)   alpha = (byte)(t * lightAlpha);
 
                         int idx = row + x * 4;
-                        buffer[idx + 0] = 0;      // B
-                        buffer[idx + 1] = 0;      // G
-                        buffer[idx + 2] = 0;      // R
-                        buffer[idx + 3] = alpha;  // A
+                        buffer[idx + 0] = 0;    // B
+                        buffer[idx + 1] = 0;    // G
+                        buffer[idx + 2] = 0;    // R
+                        buffer[idx + 3] = alpha;
                     }
                 }
 
-                // 3) Copy back and unlock
-                System.Runtime.InteropServices.Marshal.Copy(buffer, 0, bd.Scan0, byteCount);
+                Marshal.Copy(buffer, 0, bd.Scan0, byteCount);
                 mask.UnlockBits(bd);
 
-                // 4) Blit over the scene
+                // Overlay it
                 g.DrawImage(mask, 0, 0);
             }
         }
