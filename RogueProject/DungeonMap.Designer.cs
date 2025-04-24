@@ -201,7 +201,7 @@ namespace RogueProject
         // Needs refactoring.
         private int DrawTiles(PaintEventArgs e)
         {
-            const int tileSize = 64;
+            const int tileSize = 48;
             const int viewRadius = 64;
 
             if (levelMap == null) return 0;
@@ -252,7 +252,7 @@ namespace RogueProject
 
         private void ApplyLightingOverlay(Graphics g)
         {
-            const int tileSize       = 64;    // must match your DrawTiles
+            const int tileSize       = 48;    // must match your DrawTiles
             const int torchRadius    = 2;     // in tiles
             const int gradientRadius = torchRadius * tileSize;
 
