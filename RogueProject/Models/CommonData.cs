@@ -16,7 +16,8 @@ public abstract class CommonData {
         { "Empty", ' ' },
         { "Gold", '*' },
         { "Amulet", '♀' },
-        { "Player", '☺'}
+        { "Player", '☺'},
+        { "Goblin", 'G' }
     };
 
     public static readonly Dictionary<string, int[]> PlayerDirections = new Dictionary<string, int[]> {
@@ -34,7 +35,7 @@ public abstract class CommonData {
         { "RoomCreation", 90 },
         { "DoorwayCreation", 90 },
         { "GoldGeneration", 65 },
-        { "RoomIsDark", 10 }
+        { "RoomIsDark", 50 }
     };
 
     // Needs refactoring, I don't want to use magic numbers here. Calculate them from map height and width

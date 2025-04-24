@@ -255,8 +255,8 @@ namespace RogueProject
             int torchY    = currentGame.CurrentPlayer.Location.Y * tileSize + tileSize / 2;
             int radius    = tileSize * 2;
             byte lightAlpha = 75;
-            byte darkAlpha = 125;
-            byte reallyDarkAlpha = 220;
+            byte darkAlpha = 150;
+            byte reallyDarkAlpha = 225;
 
             // 1) Create a 32bpp ARGB mask
             using (var mask = new Bitmap(width, height, PixelFormat.Format32bppArgb))
