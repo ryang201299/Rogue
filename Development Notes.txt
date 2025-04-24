@@ -7,3 +7,51 @@
 
         LATEST LATEST notes...lol
         - torch now works. I'd prefer it if hallways were discovered with a gradient too.
+
+Things to do
+- Characters
+  - Enemies
+    - goblin
+    - snakes
+    - wizard?
+    - bat?
+  - Friendlies
+    - Someone who gives the player a hint, or you can ask questions to
+    - A trader, who you can trade gold for weapons and potions
+
+- Save game
+  - Autosave
+  - Save on death
+  - Pause menu
+    - Not sure what else this would display
+
+- Potions
+  - dependent on inventory
+  - Instant
+    - Health
+  - Time based
+    - Strength
+    - Light (dark rooms are lit up) / Could also last one level, so goes away when you leave the current level
+  - 
+
+- scrolls
+- High scores
+- Scoring in general
+  - Gold
+  - Points per action
+    - Killing enemy
+    - Descending another level
+
+- Option to display OG layout vs new layout?
+
+- Different sprite for holding a sword vs bow
+
+- Item pickups
+  - Potions
+  - weapons
+
+- Upgrade system
+  - Lots of kills will upgrade all weapons and armour
+
+- Half way point of game uses different coloured tilesheet i.e. purple? Pretty cool
+  - Can introduce certain monsters at this point
