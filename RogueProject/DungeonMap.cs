@@ -21,11 +21,6 @@ namespace RogueProject
 
         }
 
-        private void Form1_Load(object sender, EventArgs e)
-        {
-
-        }
-
         private void btnNext_Click(object sender, EventArgs e)
         {
             if (PlayerNameBox.TextLength > 0)
@@ -43,18 +38,17 @@ namespace RogueProject
             }
         }
 
-        private void DungeonMain_KeyUp(object sender, KeyEventArgs e)
-        {
-            Debug.WriteLine("Key Up - " + e.KeyValue);
-        }
-
-        // Means pressing any key down - does not mean pressing the down arrow key 
         private void DungeonMain_KeyDown(object sender, KeyEventArgs e)
         {
             Debug.WriteLine("Key Down - " + e.KeyValue);
 
             if (this.currentGame != null)
             {
+                if (e.KeyCode == Keys.I)
+                {
+                    InventoryPanel.Visible = !InventoryPanel.Visible;
+                }
+
                 currentGame.KeyHandler(e.KeyValue, e.Shift);
                 levelMap = currentGame.CurrentMap.LevelMap;
                 lblStatus.Text = currentGame.StatusMessage;
@@ -62,16 +56,6 @@ namespace RogueProject
 
                 panelMap.Invalidate();
             }
-        }
-
-        private void DungeonMain_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            Debug.WriteLine("Key Press - " + e.KeyChar);
-        }
-
-        private void PlayerNamePanel_Paint(object sender, PaintEventArgs e)
-        {
-
         }
     }
 }
