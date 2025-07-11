@@ -1,9 +1,6 @@
-
-
-using Rogueproject;
 using RogueProject.Models;
 
-namespace RogueProject;
+namespace RogueProject.Models.Classes;
 
 public class MapSpace {
     public MapRoom MapRoom { get; set; }
@@ -29,21 +26,21 @@ public class MapSpace {
     /// </summary>
     public MapSpace(int x, int y) {
         // Create blank space for map
-        this.MapCharacter = CommonData.MapCharacters["Empty"];
-        this.SearchRequired = false;
-        this.X = x;
-        this.Y = y;
+        MapCharacter = CommonData.MapCharacters["Empty"];
+        SearchRequired = false;
+        X = x;
+        Y = y;
     }
 
     // Generic create space with character, region, and room associated
     public MapSpace(char mapChar, int X, int Y, int regionNumber, MapRoom mapRoom) {
         // Create a non-blank space
-        this.MapCharacter = mapChar;
-        this.SearchRequired = false;
+        MapCharacter = mapChar;
+        SearchRequired = false;
         this.X = X;
         this.Y = Y;
-        this.Region = regionNumber;
-        this.MapRoom = mapRoom;
+        Region = regionNumber;
+        MapRoom = mapRoom;
     }
 
     // // Update an existing space? Not sure why this is needed, instead of just updating the fields
@@ -60,20 +57,20 @@ public class MapSpace {
     // Create searchable space
     public MapSpace(char mapChar, bool search, int X, int Y, int regionNumber, MapRoom mapRoom) {
         // Allows for setting objects to be displayed or hidden
-        this.MapCharacter = mapChar;
-        this.SearchRequired = search;
+        MapCharacter = mapChar;
+        SearchRequired = search;
         this.X = X;
         this.Y = Y;
-        this.Region = regionNumber;
-        this.MapRoom = mapRoom;
+        Region = regionNumber;
+        MapRoom = mapRoom;
     }
 
     public MapSpace(char mapChar, bool search, int X, int Y, int regionNumber) {
         // Allows for setting objects to be displayed or hidden
-        this.MapCharacter = mapChar;
-        this.SearchRequired = search;
+        MapCharacter = mapChar;
+        SearchRequired = search;
         this.X = X;
         this.Y = Y;
-        this.Region = regionNumber;
+        Region = regionNumber;
     }
 }

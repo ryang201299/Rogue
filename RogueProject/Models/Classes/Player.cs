@@ -1,6 +1,6 @@
-﻿using static RogueProject.MapLevel;
+﻿using static RogueProject.Models.Classes.MapLevel;
 
-namespace RogueProject
+namespace RogueProject.Models.Classes
 {
     public class Player
     {
@@ -34,14 +34,14 @@ namespace RogueProject
         {
             var rand = new Random();
             this.PlayerName = PlayerName;
-            this.HP = STARTING_HP;
-            this.HPDamage = 0;
-            this.Strength = STARTING_STRENGTH;
-            this.StrengthMod = 0;
-            this.Gold = 0;
-            this.Experience = 1;
-            this.HungerState = HungerLevel.Satisfied;
-            this.HungerTurn = rand.Next(MIN_FOODVALUE, MAX_FOODVALUE + 1);
+            HP = STARTING_HP;
+            HPDamage = 0;
+            Strength = STARTING_STRENGTH;
+            StrengthMod = 0;
+            Gold = 0;
+            Experience = 1;
+            HungerState = HungerLevel.Satisfied;
+            HungerTurn = rand.Next(MIN_FOODVALUE, MAX_FOODVALUE + 1);
         }
     }
 }

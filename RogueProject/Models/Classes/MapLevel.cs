@@ -1,9 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using Rogueproject;
 using RogueProject.Models;
 
-namespace RogueProject;
+namespace RogueProject.Models.Classes;
 public class MapLevel {
     #region "Properties"
     // Map measurements
@@ -35,12 +34,12 @@ public class MapLevel {
 
         do
         {
-            this.LevelMap = new MapSpace[_MAP_WIDTH, _MAP_HEIGHT];
+            LevelMap = new MapSpace[_MAP_WIDTH, _MAP_HEIGHT];
 
-            this.MapRegions = new List<MapRegion>();
+            MapRegions = new List<MapRegion>();
 
             // refactor to hold doorways within rooms and the maplevel?
-            this._allDoorways = new Dictionary<int, List<MapSpace>>()
+            _allDoorways = new Dictionary<int, List<MapSpace>>()
             {
                 { 1, new List<MapSpace>() },
                 { 2, new List<MapSpace>() },
@@ -113,8 +112,8 @@ public class MapLevel {
         for (int row = 0; row < 3; row++) {
             for (int col = 0; col < 3; col++) {
                 // Calculate actual x,y coordinates using region dimensions
-                int x = 1 + (col * _REGION_WIDTH);
-                int y = 1 + (row * _REGION_HEIGHT);
+                int x = 1 + col * _REGION_WIDTH;
+                int y = 1 + row * _REGION_HEIGHT;
                 
                 MapRegion mapRegion = new MapRegion(region);
                 MapRegions.Add(mapRegion);
@@ -126,8 +125,8 @@ public class MapLevel {
                     int roomWidth = RandomObject.Next(_MIN_ROOM_WIDTH, _MAX_ROOM_WIDTH + 1);
 
                     // Center room in region
-                    int southWallYAxis = (int)((_REGION_HEIGHT - roomHeight) / 2) + y;
-                    int westWallXAxis = (int)((_REGION_WIDTH - roomWidth) / 2) + x;
+                    int southWallYAxis = (_REGION_HEIGHT - roomHeight) / 2 + y;
+                    int westWallXAxis = (_REGION_WIDTH - roomWidth) / 2 + x;
 
                     int eastWallXAxis = westWallXAxis + roomWidth;
                     int northWallYAxis = southWallYAxis + roomHeight;
@@ -222,7 +221,7 @@ public class MapLevel {
             MapSpace possibleSuccessor = LevelMap[newX, newY];
             // MapSpace possibleSuccessor = new MapSpace(LevelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
 
-            if ((!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y))
+            if (!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y)
                 && possibleSuccessor.MapCharacter == CommonData.MapCharacters["Empty"]
                 && LevelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != CommonData.MapCharacters["Hallway"]
                 && LevelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"]
@@ -239,7 +238,7 @@ public class MapLevel {
                 int f = g + h;
 
                 MapSpace? existingNode = openSet.Find(n => n.X == possibleSuccessor.X && n.Y == possibleSuccessor.Y);
-                if (existingNode == null || (existingNode.FCost.HasValue && f < existingNode.FCost.Value))
+                if (existingNode == null || existingNode.FCost.HasValue && f < existingNode.FCost.Value)
                 {
                     possibleSuccessor.GCost = g;
                     possibleSuccessor.HCost = h;
@@ -453,7 +452,7 @@ public class MapLevel {
             xPos = RandomObject.Next(1, _MAP_WIDTH_MAX_INDEX);
             yPos = RandomObject.Next(1, _MAP_HEIGHT_MAX_INDEX);
 
-            freeSpace = (LevelMap[xPos, yPos].MapCharacter == CommonData.MapCharacters["RoomFloor"])
+            freeSpace = LevelMap[xPos, yPos].MapCharacter == CommonData.MapCharacters["RoomFloor"]
                 && LevelMap[xPos, yPos].DisplayCharacter == null
                 && LevelMap[xPos, yPos].ItemCharacter == null;
         }
@@ -512,10 +511,10 @@ public class MapLevel {
 
         int returnVal;
 
-        int regionX = ((int)RoomAnchorX / _REGION_WIDTH) + 1;
-        int regionY = ((int)RoomAnchorY / _REGION_HEIGHT) + 1;
+        int regionX = RoomAnchorX / _REGION_WIDTH + 1;
+        int regionY = RoomAnchorY / _REGION_HEIGHT + 1;
 
-        returnVal = (regionX) + ((regionY - 1) * 3);
+        returnVal = regionX + (regionY - 1) * 3;
 
         return returnVal;
     }

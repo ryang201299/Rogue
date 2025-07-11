@@ -1,7 +1,6 @@
-using RogueProject;
 using RogueProject.Models;
 
-namespace Rogueproject;
+namespace RogueProject.Models.Classes;
 
 public class MapRoom {
     private Random RandomObject { get; set; }
@@ -24,22 +23,22 @@ public class MapRoom {
         AllDoorways = allDoorways;
         
         RandomObject = new Random();
-        
-        this.NorthWallYAxis = northWallYAxis;
-        this.SouthWallYAxis = southWallYAxis;
-        this.WestWallXAxis = westWallXAxis;
-        this.EastWallXAxis = eastWallXAxis;
-        this.RegionNumber = regionNumber;
-        this.Level = level;
-        this.MapSpaces = new List<MapSpace>();
-        this.Visited = false;
+
+        NorthWallYAxis = northWallYAxis;
+        SouthWallYAxis = southWallYAxis;
+        WestWallXAxis = westWallXAxis;
+        EastWallXAxis = eastWallXAxis;
+        RegionNumber = regionNumber;
+        Level = level;
+        MapSpaces = new List<MapSpace>();
+        Visited = false;
 
         ValidateMapRoomDimensions();
         PopulateRoom();
 
         // Increases chance of dark room as the level increases
         int chanceRoomIsDark = CommonData.Probabilities["RoomIsDark"] * Level.GameInstance.CurrentLevel;
-        this.IsDark = RandomObject.Next(1, 101) <= chanceRoomIsDark;
+        IsDark = RandomObject.Next(1, 101) <= chanceRoomIsDark;
     }
 
     private void PopulateRoom() {
@@ -141,7 +140,7 @@ public class MapRoom {
             // }
         }
 
-        this.Visited = true;
+        Visited = true;
     }
 
     public void GenerateDoors() {

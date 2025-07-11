@@ -1,5 +1,5 @@
-﻿using Rogueproject;
-using RogueProject.Models;
+﻿using RogueProject.Models;
+using RogueProject.Models.Classes;
 using RogueProject.Models.Enums;
 
 namespace RogueProject;

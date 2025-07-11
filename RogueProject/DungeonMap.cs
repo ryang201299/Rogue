@@ -1,3 +1,4 @@
+using RogueProject.Models.Classes;
 using System.Diagnostics;
 
 namespace RogueProject

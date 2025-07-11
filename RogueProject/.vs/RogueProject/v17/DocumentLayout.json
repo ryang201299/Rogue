@@ -1,34 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\",
+  "WorkspaceRootPath": "\\\\longview.corp\\DFS\\Users\\Ryan.Gorman\\Documents\\Rogue\\RogueProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\dungeonmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:dungeonmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\classes\\maplevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:classes\\maplevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\dungeonmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:dungeonmap.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\dungeonmap.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:dungeonmap.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryang\\documents\\free time\\projects\\dotnet\\c#\\rogue\\rogueproject\\models\\commondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:models\\commondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|\\\\longview.corp\\dfs\\users\\ryan.gorman\\documents\\rogue\\rogueproject\\classes\\mapspace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -38,91 +13,28 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 2,
           "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "DungeonMap.cs",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\DungeonMap.cs",
-              "RelativeDocumentMoniker": "DungeonMap.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\DungeonMap.cs",
-              "RelativeToolTip": "DungeonMap.cs",
-              "ViewState": "AgIAABUAAAAAAAAAAAAswCgAAABHAAAAAAAAAA==",
+              "Title": "MapSpace.cs",
+              "DocumentMoniker": "\\\\longview.corp\\DFS\\Users\\Ryan.Gorman\\Documents\\Rogue\\RogueProject\\Classes\\MapSpace.cs",
+              "RelativeDocumentMoniker": "Classes\\MapSpace.cs",
+              "ToolTip": "\\\\longview.corp\\DFS\\Users\\Ryan.Gorman\\Documents\\Rogue\\RogueProject\\Classes\\MapSpace.cs",
+              "RelativeToolTip": "Classes\\MapSpace.cs",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABQAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-27T14:04:40.44Z",
+              "WhenOpened": "2025-07-11T15:15:12.29Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MapLevel.cs",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Classes\\MapLevel.cs",
-              "RelativeDocumentMoniker": "Classes\\MapLevel.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Classes\\MapLevel.cs",
-              "RelativeToolTip": "Classes\\MapLevel.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAzAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T14:19:38.501Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "DungeonMap.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\DungeonMap.Designer.cs",
-              "RelativeDocumentMoniker": "DungeonMap.Designer.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\DungeonMap.Designer.cs",
-              "RelativeToolTip": "DungeonMap.Designer.cs",
-              "ViewState": "AQIAAIIBAAAAAAAAAAAUwJYBAAArAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T17:36:33.28Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "CommonData.cs",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Models\\CommonData.cs",
-              "RelativeDocumentMoniker": "Models\\CommonData.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Models\\CommonData.cs",
-              "RelativeToolTip": "Models\\CommonData.cs",
-              "ViewState": "AQIAABIAAAAAAAAAAAAAAC4AAABDAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-19T14:25:56.949Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Game.cs",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Game.cs",
-              "RelativeDocumentMoniker": "Game.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Game.cs",
-              "RelativeToolTip": "Game.cs",
-              "ViewState": "AQIAABgAAAAAAAAAAAAAACcAAAAAAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-01-02T19:26:57.907Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "Program.cs",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Program.cs",
-              "RelativeDocumentMoniker": "Program.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\Program.cs",
-              "RelativeToolTip": "Program.cs",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAsAAAArAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-20T14:04:18.637Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "DungeonMap.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\DungeonMap.cs",
-              "RelativeDocumentMoniker": "DungeonMap.cs",
-              "ToolTip": "C:\\Users\\ryang\\Documents\\Free Time\\Projects\\Dotnet\\C#\\Rogue\\RogueProject\\DungeonMap.cs [Design]",
-              "RelativeToolTip": "DungeonMap.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-26T18:52:19.661Z"
             }
           ]
         }
