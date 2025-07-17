@@ -1,9 +1,26 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "\\\\longview.corp\\DFS\\Users\\Ryan.Gorman\\Documents\\Rogue\\RogueProject\\",
+  "WorkspaceRootPath": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|\\\\longview.corp\\dfs\\users\\ryan.gorman\\documents\\rogue\\rogueproject\\classes\\mapspace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryan.gorman\\desktop\\rogue\\rogueproject\\game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:game.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryan.gorman\\desktop\\rogue\\rogueproject\\models\\classes\\maplevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:models\\classes\\maplevel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryan.gorman\\desktop\\rogue\\rogueproject\\models\\classes\\mapspace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:models\\classes\\mapspace.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryan.gorman\\desktop\\rogue\\rogueproject\\dungeonmap.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:dungeonmap.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|c:\\users\\ryan.gorman\\desktop\\rogue\\rogueproject\\models\\commondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{34FA5459-BFB7-4FF5-8AAB-0037A4CED4D1}|RogueProject.csproj|solutionrelative:models\\commondata.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -13,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 6,
           "Children": [
             {
               "$type": "Bookmark",
@@ -25,15 +42,63 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MapSpace.cs",
-              "DocumentMoniker": "\\\\longview.corp\\DFS\\Users\\Ryan.Gorman\\Documents\\Rogue\\RogueProject\\Classes\\MapSpace.cs",
-              "RelativeDocumentMoniker": "Classes\\MapSpace.cs",
-              "ToolTip": "\\\\longview.corp\\DFS\\Users\\Ryan.Gorman\\Documents\\Rogue\\RogueProject\\Classes\\MapSpace.cs",
-              "RelativeToolTip": "Classes\\MapSpace.cs",
-              "ViewState": "AgIAAAMAAAAAAAAAAAAAABQAAABFAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "DungeonMap.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\DungeonMap.Designer.cs",
+              "RelativeDocumentMoniker": "DungeonMap.Designer.cs",
+              "ToolTip": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\DungeonMap.Designer.cs",
+              "RelativeToolTip": "DungeonMap.Designer.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAswCIAAAAwAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-11T15:15:12.29Z",
+              "WhenOpened": "2025-07-11T21:00:03.709Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MapSpace.cs",
+              "DocumentMoniker": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Models\\Classes\\MapSpace.cs",
+              "RelativeDocumentMoniker": "Models\\Classes\\MapSpace.cs",
+              "ToolTip": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Models\\Classes\\MapSpace.cs",
+              "RelativeToolTip": "Models\\Classes\\MapSpace.cs",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAIwBQAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T20:25:23.96Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MapLevel.cs",
+              "DocumentMoniker": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Models\\Classes\\MapLevel.cs",
+              "RelativeDocumentMoniker": "Models\\Classes\\MapLevel.cs",
+              "ToolTip": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Models\\Classes\\MapLevel.cs",
+              "RelativeToolTip": "Models\\Classes\\MapLevel.cs",
+              "ViewState": "AgIAAAMBAAAAAAAAAAAtwBcBAAAoAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T19:09:02.345Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "CommonData.cs",
+              "DocumentMoniker": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Models\\CommonData.cs",
+              "RelativeDocumentMoniker": "Models\\CommonData.cs",
+              "ToolTip": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Models\\CommonData.cs",
+              "RelativeToolTip": "Models\\CommonData.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T18:32:27.093Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Game.cs",
+              "DocumentMoniker": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Game.cs",
+              "RelativeDocumentMoniker": "Game.cs",
+              "ToolTip": "C:\\Users\\Ryan.Gorman\\Desktop\\Rogue\\RogueProject\\Game.cs",
+              "RelativeToolTip": "Game.cs",
+              "ViewState": "AgIAAFMAAAAAAAAAAADgv14AAABJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-11T18:05:21.975Z",
               "EditorCaption": ""
             }
           ]

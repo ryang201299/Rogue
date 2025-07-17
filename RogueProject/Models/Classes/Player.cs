@@ -1,9 +1,11 @@
-﻿using static RogueProject.Models.Classes.MapLevel;
+﻿using RogueProject.Models.Enums;
+using RogueProject.Models.Interfaces;
 
 namespace RogueProject.Models.Classes
 {
-    public class Player
+    public class Player : ICharacter
     {
+        public CharacterType Type { get; init; } = CharacterType.PLAYER;
         private const int STARTING_HP = 12;
         private const int STARTING_STRENGTH = 16;
         public const int MAX_FOODVALUE = 1700;

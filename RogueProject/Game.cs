@@ -9,6 +9,7 @@ public class Game
     public int CurrentLevel { get; set; }
     public List<MapLevel> VisitedLevels { get; set; }
     public Player CurrentPlayer { get; }
+    public Monster fredDaMonster { get; init; }
     public int CurrentTurn { get; }
     public string StatusMessage { get; set; }
     public string Stats { get; set; }
@@ -25,13 +26,33 @@ public class Game
         this.VisitedLevels = new List<MapLevel>();
         this.CurrentMap = new MapLevel(this);
         this.CurrentPlayer = new Player(playerName);
+
+        this.fredDaMonster = new(CharacterType.ZOMBIE);
+        this.fredDaMonster.Location = CurrentMap.PlaceMapCharacter(CommonData.MapCharacters["Zombie"], true);
+
         this.CurrentPlayer.Location = CurrentMap.PlaceMapCharacter(CommonData.MapCharacters["Player"], true);
         this.CurrentMap.InitialTorch();
+
         this.CurrentTurn = 0;
         this.StatusMessage = $"Welcome to the Dungeon, {this.CurrentPlayer.PlayerName} ...";
         this.Stats = $"Level: {CurrentLevel}   Gold: {CurrentPlayer.Gold}";
         this.GameWon = false;
         this.LitSpaces = new List<MapSpace>();
+    }
+
+    /// <summary>
+    /// Uses euclidian distance to determine if the player is within a certain distance of the monster
+    /// </summary>
+    public bool IsPlayerNearMonster(Player player, Monster monster)
+    {
+        ArgumentNullException.ThrowIfNull(player);
+        ArgumentNullException.ThrowIfNull(monster);
+
+        double euclidianDistance = Math.Sqrt(Math.Pow((player.Location!.X - monster.Location!.X), 2) + Math.Pow((player.Location.Y - monster.Location.Y), 2));
+
+        int playerToMonsterDistanceThreshold = 5;
+
+        return (euclidianDistance < playerToMonsterDistanceThreshold);
     }
 
     public void KeyHandler(int keyValue, bool shiftKeyPressed)
@@ -50,6 +71,11 @@ public class Game
 
         if (key == KeyBindings.MOVE_UP || key == KeyBindings.MOVE_RIGHT || key == KeyBindings.MOVE_DOWN || key == KeyBindings.MOVE_LEFT) {
             MoveCharacter(CurrentPlayer, key);
+
+            if (IsPlayerNearMonster(CurrentPlayer, fredDaMonster))
+            {
+                MoveMonsterTowardsPlayer(this.fredDaMonster);
+            }
         }
 
         if (shiftKeyPressed)
@@ -198,6 +224,24 @@ public class Game
                 }
             }
         }
+    }
+
+    public void MoveMonsterTowardsPlayer(Monster monster)
+    {
+        if (monster.Location is null)
+        {
+            throw new ArgumentException("Monster has no location");
+        }
+
+        List<MapSpace> pathToPlayer = this.CurrentMap.AStar(monster.Location!, this.CurrentPlayer.Location!);
+
+        if (pathToPlayer.Count == 0)
+        {
+            return;
+        }
+
+        // Move the monster one step closer to the player
+        this.CurrentMap.MoveDisplayItem(monster, pathToPlayer[1]);
     }
 
     public void MoveCharacter(Player player, KeyBindings keyInput)

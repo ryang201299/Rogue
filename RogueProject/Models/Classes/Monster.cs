@@ -1,13 +1,15 @@
-﻿namespace RogueProject.Models.Classes;
+﻿using RogueProject.Models.Enums;
+using RogueProject.Models.Interfaces;
 
-public class Monster
+namespace RogueProject.Models.Classes;
+
+public class Monster : ICharacter
 {
-    public Enum MonsterType { get; init; }
+    public CharacterType Type { get; init; }
     public MapSpace? Location { get; set; }
 
-    public Monster(Enum monsterType, MapSpace startingLocation)
+    public Monster(CharacterType type)
     {
-        MonsterType = monsterType;
-        Location = startingLocation;
+        Type = type;
     }
 }

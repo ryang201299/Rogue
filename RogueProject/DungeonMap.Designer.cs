@@ -33,7 +33,8 @@ namespace RogueProject
             { CommonData.MapCharacters["Empty"], new Rectangle(96, 32, 32, 32) },
             { CommonData.MapCharacters["Player"], new Rectangle(0, 0, 32, 32) },
             { CommonData.MapCharacters["RoomDoor"], new Rectangle(32, 0, 32, 32) },
-            { CommonData.MapCharacters["Horizontal"], new Rectangle(96, 0, 32, 32) }
+            { CommonData.MapCharacters["Horizontal"], new Rectangle(96, 0, 32, 32) },
+            { CommonData.MapCharacters["Zombie"], new Rectangle(64, 96, 32, 32) }
         };
 
         /// <summary>

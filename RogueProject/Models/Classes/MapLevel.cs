@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Text;
 using RogueProject.Models;
+using RogueProject.Models.Interfaces;
 
 namespace RogueProject.Models.Classes;
 public class MapLevel {
@@ -19,14 +20,11 @@ public class MapLevel {
     private const short _MIN_ROOM_HEIGHT = 4;
     #endregion
 
+    // Replace int with region number at some point
     private readonly Dictionary<int, List<MapSpace>> _allDoorways;
-
     public MapSpace[,] LevelMap { get; set; }
-
     public List<MapRegion> MapRegions { get; set; }
-
     private Random RandomObject { get; set; }
-
     public Game GameInstance { get; set; }
 
     public MapLevel(Game game) {
@@ -211,7 +209,7 @@ public class MapLevel {
         return new Tuple<MapSpace, MapSpace>(closestDoorwayInCurrentRegion, closestDoorwayInOtherRegion);
     }
 
-    private void CheckNeighbourValidty(List<MapSpace> openSet, List<MapSpace> closedSet, MapSpace currentPosition, int xDifference, int yDifference, MapSpace goalPosition, MapSpace startingPosition)
+    public void CheckNeighbourValidityForMonster(List<MapSpace> openSet, List<MapSpace> closedSet, MapSpace currentPosition, int xDifference, int yDifference, MapSpace goalPosition, MapSpace startingPosition)
     {
         int newX = currentPosition.X + xDifference;
         int newY = currentPosition.Y + yDifference;
@@ -219,44 +217,85 @@ public class MapLevel {
         if (newX > 0 && newX < _MAP_WIDTH_MAX_INDEX && newY > 0 && newY < _MAP_HEIGHT_MAX_INDEX)
         {
             MapSpace possibleSuccessor = LevelMap[newX, newY];
-            // MapSpace possibleSuccessor = new MapSpace(LevelMap[newX, newY].MapCharacter, newX, newY, GetRegionNumber(newX, newY));
 
-            if (!closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y)
-                && possibleSuccessor.MapCharacter == CommonData.MapCharacters["Empty"]
+            // If the possible successor exists in the closed set, it has already been assessed
+            if (closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y))
+            {
+                return;
+            }
+
+            // if the possible successor is a room floor, door, or hallway, it's valid
+            if (possibleSuccessor.MapCharacter == CommonData.MapCharacters["RoomFloor"]
+                || possibleSuccessor.MapCharacter == CommonData.MapCharacters["RoomDoor"]
+                || possibleSuccessor.MapCharacter == CommonData.MapCharacters["Hallway"])
+            {
+                openSet = FinalStepOfNeighbourValidity(startingPosition, possibleSuccessor, goalPosition, currentPosition, openSet);
+            }
+        }
+    }
+
+    private void CheckNeighbourValidtyForHallway(List<MapSpace> openSet, List<MapSpace> closedSet, MapSpace currentPosition, int xDifference, int yDifference, MapSpace goalPosition, MapSpace startingPosition)
+    {
+        int newX = currentPosition.X + xDifference;
+        int newY = currentPosition.Y + yDifference;
+
+        if (newX > 0 && newX < _MAP_WIDTH_MAX_INDEX && newY > 0 && newY < _MAP_HEIGHT_MAX_INDEX)
+        {
+            MapSpace possibleSuccessor = LevelMap[newX, newY];
+
+            // If the possible successor exists in the closed set, it has already been assessed
+            if (closedSet.Any(space => space.X == possibleSuccessor.X && space.Y == possibleSuccessor.Y)) 
+            {
+                return;
+            }
+
+            // If possible successor is a empty space, and is not directly next to another hallway, it's valid
+            if (possibleSuccessor.MapCharacter == CommonData.MapCharacters["Empty"]
                 && LevelMap[possibleSuccessor.X, possibleSuccessor.Y + 1].MapCharacter != CommonData.MapCharacters["Hallway"]
                 && LevelMap[possibleSuccessor.X + 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"]
                 && LevelMap[possibleSuccessor.X, possibleSuccessor.Y - 1].MapCharacter != CommonData.MapCharacters["Hallway"]
                 && LevelMap[possibleSuccessor.X - 1, possibleSuccessor.Y].MapCharacter != CommonData.MapCharacters["Hallway"])
             {
-                int verticalWeight = 3;
-
-                int g = Math.Abs(startingPosition.X - possibleSuccessor.X) + Math.Abs(startingPosition.Y - possibleSuccessor.Y) * verticalWeight;
-
-                // Applies manhattan for heuristic
-                int h = Math.Abs(possibleSuccessor.X - goalPosition.X) + Math.Abs(possibleSuccessor.Y - goalPosition.Y) * verticalWeight;
-
-                int f = g + h;
-
-                MapSpace? existingNode = openSet.Find(n => n.X == possibleSuccessor.X && n.Y == possibleSuccessor.Y);
-                if (existingNode == null || existingNode.FCost.HasValue && f < existingNode.FCost.Value)
-                {
-                    possibleSuccessor.GCost = g;
-                    possibleSuccessor.HCost = h;
-                    possibleSuccessor.FCost = f;
-                    possibleSuccessor.Parent = currentPosition;
-
-                    if (existingNode != null)
-                    {
-                        openSet.Remove(existingNode);
-                    }
-
-                    openSet.Add(possibleSuccessor);
-                }
+                openSet = FinalStepOfNeighbourValidity(startingPosition, possibleSuccessor, goalPosition, currentPosition, openSet);
             }
         }
     }
 
-    private List<MapSpace> AStar(MapSpace startingPosition, MapSpace goalPosition)
+    // Badly needs renmaing
+    public List<MapSpace> FinalStepOfNeighbourValidity(MapSpace startingPosition, MapSpace possibleSuccessor, MapSpace goalPosition, MapSpace currentPosition, List<MapSpace> openSet)
+    {
+        int verticalWeight = 2;
+
+        int g = Math.Abs(startingPosition.X - possibleSuccessor.X) + Math.Abs(startingPosition.Y - possibleSuccessor.Y) * verticalWeight;
+
+        // Applies manhattan for heuristic
+        int h = Math.Abs(possibleSuccessor.X - goalPosition.X) + Math.Abs(possibleSuccessor.Y - goalPosition.Y) * verticalWeight;
+
+        int f = g + h;
+
+        MapSpace? existingNode = openSet.Find(n => n.X == possibleSuccessor.X && n.Y == possibleSuccessor.Y);
+        if (existingNode == null || existingNode.FCost.HasValue && f < existingNode.FCost.Value)
+        {
+            possibleSuccessor.GCost = g;
+            possibleSuccessor.HCost = h;
+            possibleSuccessor.FCost = f;
+            possibleSuccessor.Parent = currentPosition;
+
+            if (existingNode != null)
+            {
+                openSet.Remove(existingNode);
+            }
+
+            openSet.Add(possibleSuccessor);
+        }
+
+        return openSet;
+    }
+
+    /// <summary>
+    /// Uses the A* algorithm to determine a shortest possible path between two points
+    /// </summary>
+    public List<MapSpace> AStar(MapSpace startingPosition, MapSpace goalPosition)
     {
         List<MapSpace> openSet = new List<MapSpace>();
         List<MapSpace> closedSet = new List<MapSpace>();
@@ -284,11 +323,22 @@ public class MapLevel {
             openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
-            // Generate successors and add them to the open set
-            CheckNeighbourValidty(openSet, closedSet, currentNode, 0, 1, goalPosition, startingPosition);
-            CheckNeighbourValidty(openSet, closedSet, currentNode, 1, 0, goalPosition, startingPosition);
-            CheckNeighbourValidty(openSet, closedSet, currentNode, 0, -1, goalPosition, startingPosition);
-            CheckNeighbourValidty(openSet, closedSet, currentNode, -1, 0, goalPosition, startingPosition);
+            // At the time of writing, AStar is only used for monster paths and hallways. Therefore else just represents all monsters and empty is for hallways
+            if (startingPosition.MapCharacter == CommonData.MapCharacters["Empty"])
+            {
+                // Generate successors and add them to the open set
+                CheckNeighbourValidtyForHallway(openSet, closedSet, currentNode, 0, 1, goalPosition, startingPosition);
+                CheckNeighbourValidtyForHallway(openSet, closedSet, currentNode, 1, 0, goalPosition, startingPosition);
+                CheckNeighbourValidtyForHallway(openSet, closedSet, currentNode, 0, -1, goalPosition, startingPosition);
+                CheckNeighbourValidtyForHallway(openSet, closedSet, currentNode, -1, 0, goalPosition, startingPosition);
+            }
+            else
+            {
+                CheckNeighbourValidityForMonster(openSet, closedSet, currentNode, 0, 1, goalPosition, startingPosition);
+                CheckNeighbourValidityForMonster(openSet, closedSet, currentNode, 1, 0, goalPosition, startingPosition);
+                CheckNeighbourValidityForMonster(openSet, closedSet, currentNode, 0, -1, goalPosition, startingPosition);
+                CheckNeighbourValidityForMonster(openSet, closedSet, currentNode, -1, 0, goalPosition, startingPosition);
+            }
         }
 
         // If no path is found, return an empty list
@@ -467,16 +517,16 @@ public class MapLevel {
         return LevelMap[xPos, yPos];
     }
 
-    public void MoveDisplayItem(Player player, MapSpace newLocation) {
-        newLocation.DisplayCharacter = player.Location!.DisplayCharacter;
+    public void MoveDisplayItem(ICharacter character, MapSpace newLocation) {
+        newLocation.DisplayCharacter = character.Location!.DisplayCharacter;
 
-        player.Location.DisplayCharacter = null;
+        character.Location.DisplayCharacter = null;
 
-        if (player.Location.ItemCharacter != null) {
-            player.Location.ItemCharacter = null;
+        if (character.Location.ItemCharacter != null) {
+            character.Location.ItemCharacter = null;
         }
 
-        player.Location = newLocation;
+        character.Location = newLocation;
     }
 
     public string MapText()
